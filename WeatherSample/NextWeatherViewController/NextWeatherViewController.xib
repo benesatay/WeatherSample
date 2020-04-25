@@ -9,62 +9,37 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NextWeatherViewController" customModule="WeatherSample" customModuleProvider="target">
             <connections>
+                <outlet property="NextWeatherCollectionView" destination="Vsp-nh-r3o" id="87V-A6-Yr7"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="90" height="156"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sCR-Qb-OXY">
-                    <rect key="frame" x="20" y="111" width="50" height="25"/>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Vsp-nh-r3o">
+                    <rect key="frame" x="0.0" y="44" width="414" height="250"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="25" id="3wd-8p-VGI"/>
-                        <constraint firstAttribute="width" constant="50" id="laV-nj-Ec4"/>
+                        <constraint firstAttribute="height" constant="250" id="L2s-UI-rGy"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5C" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6d0-PF-cJN">
-                    <rect key="frame" x="20" y="20" width="50" height="25"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="50" id="8aH-E2-R6t"/>
-                        <constraint firstAttribute="height" constant="25" id="Kgp-Tc-0Ei"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bww-Xs-tXh">
-                    <rect key="frame" x="20" y="53" width="50" height="50"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="50" id="Bek-rY-SJO"/>
-                        <constraint firstAttribute="width" constant="50" id="F41-7H-EtG"/>
-                    </constraints>
-                </imageView>
+                    <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="E7V-Dt-FVC">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="Bww-Xs-tXh" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="37Z-Sa-5jv"/>
-                <constraint firstItem="Bww-Xs-tXh" firstAttribute="top" secondItem="6d0-PF-cJN" secondAttribute="bottom" constant="8" id="3Ln-nh-fW4"/>
-                <constraint firstItem="sCR-Qb-OXY" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="4a9-2Z-x4z"/>
-                <constraint firstItem="6d0-PF-cJN" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="5oe-ez-8Nf"/>
-                <constraint firstItem="Bww-Xs-tXh" firstAttribute="width" secondItem="6d0-PF-cJN" secondAttribute="width" id="A7Y-Fq-KWU"/>
-                <constraint firstItem="sCR-Qb-OXY" firstAttribute="width" secondItem="6d0-PF-cJN" secondAttribute="width" id="G0W-yq-IZS"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="sCR-Qb-OXY" secondAttribute="bottom" constant="20" id="L3v-86-ulo"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="sCR-Qb-OXY" secondAttribute="trailing" constant="20" id="aAF-gc-kpJ"/>
-                <constraint firstItem="6d0-PF-cJN" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="col-rg-ed9"/>
-                <constraint firstItem="sCR-Qb-OXY" firstAttribute="top" secondItem="Bww-Xs-tXh" secondAttribute="bottom" constant="8" id="kld-hf-nXH"/>
-                <constraint firstItem="sCR-Qb-OXY" firstAttribute="top" secondItem="Bww-Xs-tXh" secondAttribute="bottom" constant="8" id="mU3-0d-sUf"/>
-                <constraint firstAttribute="trailing" secondItem="6d0-PF-cJN" secondAttribute="trailing" constant="20" id="ndb-Uk-bmd"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Bww-Xs-tXh" secondAttribute="trailing" constant="20" id="sQU-nx-If2"/>
-                <constraint firstItem="Bww-Xs-tXh" firstAttribute="top" secondItem="6d0-PF-cJN" secondAttribute="bottom" constant="8" id="uHI-wx-PrV"/>
+                <constraint firstItem="Vsp-nh-r3o" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="FT9-Ol-asG"/>
+                <constraint firstItem="Vsp-nh-r3o" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="ngR-9f-cds"/>
+                <constraint firstItem="Vsp-nh-r3o" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="taj-pt-SW4"/>
             </constraints>
-            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <point key="canvasLocation" x="302.89855072463769" y="-26.785714285714285"/>
+            <point key="canvasLocation" x="-75.362318840579718" y="-281.25"/>
         </view>
     </objects>
 </document>

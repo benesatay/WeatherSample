@@ -10,6 +10,9 @@ import UIKit
 
 class CurrentWeatherViewController: UIViewController {
 
+    @IBOutlet weak var cityNameLabel: UILabel!
+    @IBOutlet weak var currentTemperatureLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -18,11 +21,11 @@ class CurrentWeatherViewController: UIViewController {
     }
 
     func setBackgroundImage() {
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
         let image = UIImage(named: "afternoon")
         imageView.image = image
-        
         view.addSubview(imageView)
+        self.view.sendSubviewToBack(imageView)
     }
 
 

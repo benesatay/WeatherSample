@@ -10,7 +10,6 @@ import UIKit
 
 class WeatherViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-
     @IBOutlet weak var currentDayCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,30 +17,53 @@ class WeatherViewController: UIViewController, UICollectionViewDelegate, UIColle
         currentDayCollectionView.delegate = self
         currentDayCollectionView.dataSource = self
         self.navigationController?.isNavigationBarHidden = true
-
-        let nib = UINib(nibName: "CurrentWeatherCollectionViewCell", bundle: nil)
-        currentDayCollectionView.register(nib, forCellWithReuseIdentifier: "CurrentWeatherCollectionViewCell")
+        
+        let customOrange = UIColor(red:250/255, green:198/255, blue:97/255, alpha:1.0)
+        self.view.createGradientLayer(color1: customOrange, color2: .white)
+       
+      
+        let nib = UINib(nibName: "CollectionViewCell", bundle: nil)
+        currentDayCollectionView.register(nib, forCellWithReuseIdentifier: "CollectionViewCell")
+      
     }
     
+ 
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: UIScreen.main.bounds.width, height: 500)
+        var size = CGSize(width: 0, height: 0)
+        if indexPath.row == 1 || indexPath.row == 2 {
+            size = CGSize(width: UIScreen.main.bounds.width, height: 250)
+        } else {
+            size = CGSize(width: UIScreen.main.bounds.width, height: 500)
+        }
+        return size
        }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let  cell = currentDayCollectionView.dequeueReusableCell(withReuseIdentifier: "CurrentWeatherCollectionViewCell", for: indexPath) as! CurrentWeatherCollectionViewCell
-        
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cell.frame.width, height: cell.frame.height))
-        let image = UIImage(named: "afternoon")
-        imageView.image = image
-        cell.backgroundView = UIView()
-        cell.backgroundView?.addSubview(imageView)
+        let  cell = currentDayCollectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCell", for: indexPath) as! CollectionViewCell
+        if indexPath.row == 1 {
+            let nib = NextWeatherViewController(nibName: "NextWeatherViewController", bundle: nil)
+            cell.addSubview(nib.view)
+            addChild(nib)
+        } else if indexPath.row == 2 {
+            let nib = NextWeatherViewController(nibName: "NextWeatherViewController", bundle: nil)
+
+            cell.addSubview(nib.view)
+            addChild(nib)
+        }else {
+            let nib = CurrentWeatherViewController(nibName: "CurrentWeatherViewController", bundle: nil)
+
+            cell.addSubview(nib.view)
+        }
+ 
         return cell
     }
     
 
 
 }
+
