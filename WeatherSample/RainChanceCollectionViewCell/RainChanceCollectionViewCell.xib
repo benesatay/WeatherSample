@@ -19,7 +19,6 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7fI-k6-28d">
                         <rect key="frame" x="0.0" y="0.0" width="60" height="25"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="60" id="3dM-kk-CQh"/>
                             <constraint firstAttribute="height" constant="25" id="TPr-S9-7rI"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
@@ -27,18 +26,10 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6A4-e8-30z">
-                        <rect key="frame" x="0.0" y="33" width="60" height="60"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="60" id="JOX-hZ-bkP"/>
-                            <constraint firstAttribute="width" constant="60" id="VCM-Ld-wnT"/>
-                        </constraints>
+                        <rect key="frame" x="0.0" y="33" width="60" height="61"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PmL-zO-KrA">
-                        <rect key="frame" x="0.0" y="101" width="60" height="25"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="25" id="5Za-NY-ANW"/>
-                            <constraint firstAttribute="width" constant="60" id="qec-0z-ziM"/>
-                        </constraints>
+                        <rect key="frame" x="0.0" y="102" width="60" height="24"/>
                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -61,6 +52,10 @@
             </constraints>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="60" height="113"/>
+            <connections>
+                <outlet property="rainChanceLabel" destination="7fI-k6-28d" id="l4m-ug-cS9"/>
+                <outlet property="rainTimeLabel" destination="PmL-zO-KrA" id="QPA-zE-PVF"/>
+            </connections>
             <point key="canvasLocation" x="144.92753623188406" y="115.17857142857142"/>
         </collectionViewCell>
     </objects>

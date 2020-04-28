@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+let baseURL: String = "http://api.openweathermap.org/data/2.5/weather?q=Nazilli&"
+
+class ApiManager {
+    static let shared = ApiManager()
+}

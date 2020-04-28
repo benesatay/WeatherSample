@@ -10,6 +10,8 @@ import UIKit
 
 class RainChanceCollectionViewCell: UICollectionViewCell {
 
+    @IBOutlet weak var rainChanceLabel: UILabel!
+    @IBOutlet weak var rainTimeLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

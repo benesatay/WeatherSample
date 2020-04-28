@@ -22,10 +22,7 @@ class NextWeatherViewController: UIViewController, UICollectionViewDataSource, U
         let nib = UINib(nibName: "NextWeatherCollectionViewCell", bundle: nil)
         NextWeatherCollectionView.register(nib, forCellWithReuseIdentifier: "NextWeatherCollectionViewCell")
     }
-    
-   
-    
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 150)
     }
