@@ -8,8 +8,8 @@
 
 import Foundation
 
-let baseURL: String = "http://api.openweathermap.org/data/2.5/weather?q=Nazilli&"
-
+let baseURL: String = "http://api.openweathermap.org/data/2.5/weather?q=İzmir&"
+let iconBaseURL: String = "http://openweathermap.org/img/wn/"
 class ApiManager {
     static let shared = ApiManager()
 }

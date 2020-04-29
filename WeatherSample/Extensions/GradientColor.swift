@@ -9,12 +9,9 @@
 import UIKit
 
 extension UIView {
-    
     func createGradientLayer(color1: UIColor, color2: UIColor) {
         let gradientLayer: CAGradientLayer = CAGradientLayer()
-        
         gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500)
-        
         gradientLayer.colors = [color1.cgColor, color2.cgColor]
         self.layer.insertSublayer(gradientLayer, at: 0)
     }
