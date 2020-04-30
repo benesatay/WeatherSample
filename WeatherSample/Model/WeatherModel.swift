@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct Model: Codable {
+struct CurrentWeatherModel: Codable {
     let coord: Coord?
     let weather: [Weather?]
     let base: String?
@@ -41,6 +41,8 @@ struct Main: Codable {
     let humidity: Int?
     let sea_level: Double?
     let grnd_level: Double?
+    let temp_kf: Double?
+
 }
 
 struct Sys: Codable {
@@ -48,6 +50,7 @@ struct Sys: Codable {
     let message: Double?
     let country: String?
     let sunrise, sunset: Int?
+    
 }
 
 struct Weather: Codable {
@@ -61,3 +64,4 @@ struct Wind: Codable {
     let speed: Double?
     let deg: Int?
 }
+

@@ -20,7 +20,9 @@
 		4A6BD1E22455039600614875 /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6BD1E12455039600614875 /* WeatherViewModel.swift */; };
 		4AB13FC82453D44100F95FF0 /* NextWeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB13FC62453D44100F95FF0 /* NextWeatherCollectionViewCell.swift */; };
 		4AB13FC92453D44100F95FF0 /* NextWeatherCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AB13FC72453D44100F95FF0 /* NextWeatherCollectionViewCell.xib */; };
-		4AB13FCC2453F3A900F95FF0 /* GradientColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB13FCB2453F3A900F95FF0 /* GradientColor.swift */; };
+		4AB13FCC2453F3A900F95FF0 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB13FCB2453F3A900F95FF0 /* Background.swift */; };
+		4AD40010245A79850028EB7D /* ForecastWeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD4000F245A79850028EB7D /* ForecastWeatherModel.swift */; };
+		4AD40014245A8D8B0028EB7D /* GetForecastWeatherTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD40013245A8D8B0028EB7D /* GetForecastWeatherTime.swift */; };
 		4AE09199245379E8004C4190 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE09198245379E8004C4190 /* AppDelegate.swift */; };
 		4AE0919B245379E8004C4190 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE0919A245379E8004C4190 /* SceneDelegate.swift */; };
 		4AE091A2245379EF004C4190 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AE091A1245379EF004C4190 /* Assets.xcassets */; };
@@ -49,7 +51,9 @@
 		4A6BD1E12455039600614875 /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 		4AB13FC62453D44100F95FF0 /* NextWeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextWeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		4AB13FC72453D44100F95FF0 /* NextWeatherCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NextWeatherCollectionViewCell.xib; sourceTree = "<group>"; };
-		4AB13FCB2453F3A900F95FF0 /* GradientColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientColor.swift; sourceTree = "<group>"; };
+		4AB13FCB2453F3A900F95FF0 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		4AD4000F245A79850028EB7D /* ForecastWeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWeatherModel.swift; sourceTree = "<group>"; };
+		4AD40013245A8D8B0028EB7D /* GetForecastWeatherTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetForecastWeatherTime.swift; sourceTree = "<group>"; };
 		4AE09195245379E8004C4190 /* WeatherSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AE09198245379E8004C4190 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4AE0919A245379E8004C4190 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -195,6 +199,7 @@
 			isa = PBXGroup;
 			children = (
 				4A6BD1DB2454FDE400614875 /* WeatherModel.swift */,
+				4AD4000F245A79850028EB7D /* ForecastWeatherModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -210,8 +215,9 @@
 		4AE90F9A24591E550025165F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				4AB13FCB2453F3A900F95FF0 /* GradientColor.swift */,
+				4AB13FCB2453F3A900F95FF0 /* Background.swift */,
 				4A6A318C2459474600BA2F9A /* BackgroundImage.swift */,
+				4AD40013245A8D8B0028EB7D /* GetForecastWeatherTime.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -313,7 +319,9 @@
 				4AB13FC82453D44100F95FF0 /* NextWeatherCollectionViewCell.swift in Sources */,
 				4AE09199245379E8004C4190 /* AppDelegate.swift in Sources */,
 				4A6A318D2459474600BA2F9A /* BackgroundImage.swift in Sources */,
-				4AB13FCC2453F3A900F95FF0 /* GradientColor.swift in Sources */,
+				4AB13FCC2453F3A900F95FF0 /* Background.swift in Sources */,
+				4AD40014245A8D8B0028EB7D /* GetForecastWeatherTime.swift in Sources */,
+				4AD40010245A79850028EB7D /* ForecastWeatherModel.swift in Sources */,
 				4AE091D12453D21C004C4190 /* CollectionViewCell.swift in Sources */,
 				4A4847502454D0D2007B9333 /* Model.xcdatamodeld in Sources */,
 				4A4847762454D774007B9333 /* OtherDetailsViewController.swift in Sources */,

@@ -9,7 +9,10 @@
 import UIKit
 
 class NextWeatherCollectionViewCell: UICollectionViewCell {
-
+    @IBOutlet weak var nextTempLabel: UILabel!
+    @IBOutlet weak var nextTempIcon: UIImageView!
+    @IBOutlet weak var nextTempTimeLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

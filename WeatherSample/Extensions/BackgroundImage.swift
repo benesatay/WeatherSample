@@ -8,12 +8,12 @@
 
 import UIKit
 
-extension UIView {
-    func setBackgroundImage() {
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
-        let image = UIImage(named: "afternoon")
-        imageView.image = image
-        self.addSubview(imageView)
-        self.sendSubviewToBack(imageView)
-    }
-}
+//extension UIView {
+//    func setBackgroundImage() {
+//        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
+//        let image = UIImage(named: "afternoon")
+//        imageView.image = image
+//        self.addSubview(imageView)
+//        self.sendSubviewToBack(imageView)
+//    }
+//}

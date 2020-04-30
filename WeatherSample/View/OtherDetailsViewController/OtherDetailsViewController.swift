@@ -9,7 +9,7 @@
 import UIKit
 
 class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
+    
     let ViewModel = WeatherViewModel()
     
     @IBOutlet weak var rainChanceCollectionView: UICollectionView!
@@ -18,52 +18,65 @@ class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UI
     @IBOutlet weak var visibilityLabel: UILabel!
     @IBOutlet weak var sunriseLabel: UILabel!
     @IBOutlet weak var sunsetLabel: UILabel!
-
+    @IBOutlet weak var sunView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         rainChanceCollectionView.dataSource = self
         rainChanceCollectionView.delegate = self
-
-        let nib = UINib(nibName: "RainChanceCollectionViewCell", bundle: nil)
-        rainChanceCollectionView.register(nib, forCellWithReuseIdentifier: "RainChanceCollectionViewCell")
-        // Do any additional setup after loading the view.
         
-        ViewModel.getcurrentWeatherData(onSuccess: { WeatherModel in
-            self.getMain(model: WeatherModel!)
-            self.getSys(model: WeatherModel!)
+        ViewModel.getCurrentWeatherData(onSuccess: { WeatherModel in
+            DispatchQueue.main.async {
+                self.getMainDetails()
+                self.getSys()
+            }
+        }, onError: {error in
+            print(error!.localizedDescription)
+        })
+        
+        ViewModel.getForecastWeatherData(onSuccess: { forecast in
+            DispatchQueue.main.async {
+                self.rainChanceCollectionView.reloadData()
+            }
         }, onError: { error in
             print(error!.localizedDescription)
         })
         
-        
-        
+        sunView.createGradientLayer(color1: .systemOrange, color2: .systemIndigo, x:0, y:0 , width: Int(UIScreen.main.bounds.width), height: 142)
+        let nib = UINib(nibName: "RainChanceCollectionViewCell", bundle: nil)
+        rainChanceCollectionView.register(nib, forCellWithReuseIdentifier: "RainChanceCollectionViewCell")
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-           return CGSize(width: 60, height: 126)
+        return CGSize(width: 60, height: 126)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return ViewModel.forecastWeatherModel?.list?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = rainChanceCollectionView.dequeueReusableCell(withReuseIdentifier: "RainChanceCollectionViewCell", for: indexPath) as! RainChanceCollectionViewCell
+        
+        let rainData = ViewModel.forecastWeatherModel?.list?[indexPath.row].rain
+        cell.rainChanceLabel.text = String(format:"%.2f", rainData?.the3h ?? 0)
+        
+        let dtTime: Int = ViewModel.forecastWeatherModel?.list?[indexPath.row].dt ?? 0
+        cell.rainTimeLabel.text = dtTime.getForecastDate()
+        
         cell.layer.cornerRadius = 10
         cell.backgroundColor = UIColor.systemGroupedBackground
         return cell
     }
-    
-    func getMain(model: Model) {
-        let main = model.main
+}
+
+extension OtherDetailsViewController {
+    func getMainDetails() {
+        let main = ViewModel.currentWeatherModel?.main
         
-        var humidity: Int = 0
-        humidity = main?.humidity ?? 0
-        var pressure: Int = 0
-        pressure = main?.pressure ?? 0
-        var visibility: Int = 0
-        visibility = model.visibility ?? 0
+        let humidity: Int = main?.humidity ?? 0
+        let pressure: Int = main?.pressure ?? 0
+        let visibility: Int = ViewModel.currentWeatherModel?.visibility ?? 0
         
         DispatchQueue.main.async {
             self.humidityLabel.text = "\(humidity)"
@@ -72,27 +85,20 @@ class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UI
         }
     }
     
-    func getSys(model: Model) {
-        let sys = model.sys
-        
+    func getSys() {
+        let sys = ViewModel.currentWeatherModel?.sys
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
         
-        var sunrise: Int = 0
-        sunrise = sys?.sunrise ?? 0
+        let sunrise: Int = sys?.sunrise ?? 0
         let sunriseTime = Date(timeIntervalSince1970: TimeInterval(sunrise))
-        print(sunriseTime)
         
-        var sunset: Int = 0
-        sunset = sys?.sunset ?? 0
+        let sunset: Int = sys?.sunset ?? 0
         let sunsetTime = Date(timeIntervalSince1970: TimeInterval(sunset))
-        print(sunsetTime)
         
         DispatchQueue.main.async {
             self.sunriseLabel.text = dateFormatter.string(from: sunriseTime)
             self.sunsetLabel.text = dateFormatter.string(from: sunsetTime)
         }
-        
     }
-
 }

@@ -24,60 +24,54 @@ class CurrentWeatherViewController: UIViewController {
     @IBOutlet weak var currentTempMinLabel: UILabel!
     @IBOutlet weak var currentDateLabel: UILabel!
     
-    @IBOutlet weak var celciusLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.setBackgroundImage()
+
         self.activityIndicator.isHidden = false
-        ViewModel.getcurrentWeatherData(onSuccess: { WeatherModel in
+        ViewModel.getCurrentWeatherData(onSuccess: { WeatherModel in
             DispatchQueue.main.async {
-                self.getMain(model: WeatherModel!)
-                self.getWeather(model: WeatherModel!)
+                self.getMain()
+                self.getWeather()
                 self.activityIndicator.isHidden = true
             }
         }, onError: { error in
             print(error!.localizedDescription)
         })
-        self.view.setBackgroundImage()
     }
     
-    func getMain(model: Model) {
-        let main = model.main
+    func getMain() {
+        let main = ViewModel.currentWeatherModel?.main
         
-        var temp: Double = 0.0
-        temp = main?.temp ?? 0
-        
-        var feels_like: Double = 0.0
-        feels_like = main?.feels_like ?? 0
-        
-        var temp_max: Double = 0.0
-        temp_max = main?.temp_max ?? 0
-        
-        var temp_min: Double = 0.0
-        temp_min = main?.temp_min ?? 0
-        
-        self.currentTemperatureLabel.text = String(format:"%.0f", temp)
-        self.feelslikeLabel.text = String(format:"%.0f", feels_like)
-        self.currentTempMaxLabel.text = String(format:"%.0f", temp_max)
-        self.currentTempMinLabel.text = String(format:"%.0f", temp_min)
+        let temp: Double = main?.temp ?? 0
+        let feels_like: Double = main?.feels_like ?? 0
+        let temp_max: Double = main?.temp_max ?? 0
+        let temp_min: Double = main?.temp_min ?? 0
+
+        self.currentTemperatureLabel.text = String(format:"%.0f", temp).appending("°C")
+        self.feelslikeLabel.text = String(format:"%.0f", feels_like).appending("°")
+        self.currentTempMaxLabel.text = String(format:"%.0f", temp_max).appending("°")
+        self.currentTempMinLabel.text = String(format:"%.0f", temp_min).appending("°")
         
         self.currentDateLabel.text = self.setDate()
-        self.cityNameLabel.text = model.name!
+        self.cityNameLabel.text = ViewModel.currentWeatherModel?.name!
     }
     
-    func getWeather(model: Model) {
-        let weather = model.weather
-        let description = weather[0]?.description
-
-        ViewModel.downloadWeatherIcon(completionHandler: { imageView in
+    func getWeather() {
+        let weather = ViewModel.currentWeatherModel?.weather
+        let description = weather?[0]?.description
+        ViewModel.downloadCurrentWeatherIcon(completionHandler: { imageView in
             DispatchQueue.main.async {
                 self.weatherIconImageView.image = imageView
                 self.descriptionLabel.text = description
             }
         })
     }
-      
+}
+
+extension CurrentWeatherViewController {
     func setDate() -> String {
         let currentDate = Date()
         let dateFormatter = DateFormatter()

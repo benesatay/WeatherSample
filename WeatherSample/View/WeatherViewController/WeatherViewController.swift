@@ -26,7 +26,7 @@ class WeatherViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         
         let customOrange = UIColor(red:250/255, green:198/255, blue:97/255, alpha:1.0)
-        self.view.createGradientLayer(color1: customOrange, color2: customOrange)
+        self.view.createGradientLayer(color1: customOrange, color2: customOrange, x: 0, y: 0, width: Int(UIScreen.main.bounds.width), height: 500)
         
         currentDayCollectionView.backgroundColor = .clear
        
