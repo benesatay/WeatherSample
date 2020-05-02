@@ -8,9 +8,9 @@
 
 import UIKit
 
-class NextWeatherViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class NextWeatherViewController: UIViewController {
     
-    let ViewModel = WeatherViewModel()
+    let viewModel = WeatherViewModel()
     
     @IBOutlet weak var NextWeatherCollectionView: UICollectionView!
     override func viewDidLoad() {
@@ -20,8 +20,8 @@ class NextWeatherViewController: UIViewController, UICollectionViewDataSource, U
         
         NextWeatherCollectionView.dataSource = self
         NextWeatherCollectionView.delegate = self
-        
-        ViewModel.getForecastWeatherData(onSuccess: { WeatherModel in
+
+        viewModel.getForecastWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.NextWeatherCollectionView.reloadData()
             }
@@ -33,36 +33,44 @@ class NextWeatherViewController: UIViewController, UICollectionViewDataSource, U
         NextWeatherCollectionView.register(nib, forCellWithReuseIdentifier: "NextWeatherCollectionViewCell")
     }
     
+    func setup(to cell: NextWeatherCollectionViewCell, with indexPath: IndexPath) {
+          
+          let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
+          let forecastWeatherMain = forecastWeatherList?.main
+          
+          let nextTemp: Double = forecastWeatherMain?.temp ?? 0
+          cell.nextTempLabel.text = String(format:"%.0f", nextTemp).appending("°")
+          
+          let dtTime: Int = viewModel.forecastData?.list?[indexPath.row].dt ?? 0
+          cell.nextTempTimeLabel.text = dtTime.getForecastDate()
+          
+          viewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { imageView in
+              DispatchQueue.main.async {
+                  cell.nextTempIcon.image = imageView
+              }
+          })
+          
+          cell.layer.cornerRadius = 20
+        
+        cell.backgroundColor = .clear
+
+    }
+}
+
+extension NextWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 150)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ViewModel.forecastWeatherModel?.list?.count ?? 0
+        return viewModel.forecastData?.list?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = NextWeatherCollectionView.dequeueReusableCell(withReuseIdentifier: "NextWeatherCollectionViewCell", for: indexPath) as! NextWeatherCollectionViewCell
         
-        let forecastWeatherList = ViewModel.forecastWeatherModel?.list?[indexPath.row]
-        let forecastWeatherMain = forecastWeatherList?.main
-        
-        let nextTemp: Double = forecastWeatherMain?.temp ?? 0
-        cell.nextTempLabel.text = String(format:"%.0f", nextTemp).appending("°")
-        
-        let dtTime: Int = ViewModel.forecastWeatherModel?.list?[indexPath.row].dt ?? 0
-        cell.nextTempTimeLabel.text = dtTime.getForecastDate()
-        
-        ViewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { imageView in
-            DispatchQueue.main.async {
-                cell.nextTempIcon.image = imageView
-            }
-        })
-        
-        cell.layer.cornerRadius = 20
-      
-        cell.backgroundColor = UIColor.systemPurple
+         setup(to: cell, with: indexPath)
         return cell
+
     }
 }
-

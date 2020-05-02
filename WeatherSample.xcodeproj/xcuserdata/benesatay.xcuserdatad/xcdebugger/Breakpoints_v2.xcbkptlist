@@ -3,4 +3,210 @@
    uuid = "C0FA2D45-C140-42BC-938D-4725047F0250"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D05BC455-9358-4A6D-A7BC-0509910BC034"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/Extensions/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "handleDismiss(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E7998834-1DA0-4067-8238-123FF1736337"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/Extensions/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "handleDismiss(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "951B06E3-82DA-49BD-A17B-5E56350A33C3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/Extensions/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "handleDismiss(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F7877361-7606-4D79-A1D6-0B9316C72C40"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/View/CityNameViewController/CityNameViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "212639A5-8513-4AE5-AA3E-C13082A037D8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/View/CityNameViewController/CityNameViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "WeatherViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - f1e458d883735acf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.searchActive.getter : Swift.Bool"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "89">
+               </Location>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - b25dd3124d75f3fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.searchActive.setter : Swift.Bool"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - 2f09f2963916d0f8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.searchActive.modify : Swift.Bool"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "18">
+               </Location>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - 15e4eb8e0fae2d81"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.searchActive.modify : Swift.Bool with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - 7cd9393f6564175c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; WeatherSample.WeatherViewController"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "273">
+               </Location>
+               <Location
+                  uuid = "3F8723B1-CF0F-47A1-86EE-1DA9AF0B79A0 - 1703a92bc327e13"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherSample.WeatherViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;WeatherSample.WeatherViewController&gt;"
+                  moduleName = "WeatherSample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/benesatay/Desktop/iosProjects/WeatherSample/WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "210">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "99FEA38E-5CDB-4350-87E2-C787894A836D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherSample/View/WeatherViewController/WeatherViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

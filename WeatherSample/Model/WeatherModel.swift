@@ -8,6 +8,17 @@
 
 import UIKit
 
+protocol BaseMain {
+    var temp: Double? { get }
+    var feels_like: Double? { get }
+    var temp_min: Double? { get }
+    var temp_max: Double? { get }
+    var pressure: Int? { get }
+    var humidity: Int?  { get }
+    var sea_level: Double? { get }
+    var grnd_level: Double? { get }
+}
+
 struct CurrentWeatherModel: Codable {
     let coord: Coord?
     let weather: [Weather?]
@@ -19,7 +30,7 @@ struct CurrentWeatherModel: Codable {
     let dt: Int?
     let sys: Sys?
     let timezone, id: Int?
-    let name: String?
+    var name: String?
     let cod: Int?
 }
 
@@ -32,17 +43,23 @@ struct Coord: Codable {
     let lat: Double?
 }
 
-struct Main: Codable {
-    let temp: Double?
-    let feels_like: Double?
-    let temp_min: Double?
-    let temp_max: Double?
-    let pressure: Int?
-    let humidity: Int?
-    let sea_level: Double?
-    let grnd_level: Double?
-    let temp_kf: Double?
-
+struct Main: Codable, BaseMain {
+    var temp: Double?
+    
+    var feels_like: Double?
+    
+    var temp_min: Double?
+    
+    var temp_max: Double?
+    
+    var pressure: Int?
+    
+    var humidity: Int?
+    
+    var sea_level: Double?
+    
+    var grnd_level: Double?
+        
 }
 
 struct Sys: Codable {

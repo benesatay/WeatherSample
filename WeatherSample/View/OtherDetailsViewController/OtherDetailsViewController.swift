@@ -8,9 +8,9 @@
 
 import UIKit
 
-class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class OtherDetailsViewController: UIViewController {
     
-    let ViewModel = WeatherViewModel()
+    let viewModel = WeatherViewModel()
     
     @IBOutlet weak var rainChanceCollectionView: UICollectionView!
     @IBOutlet weak var humidityLabel: UILabel!
@@ -19,22 +19,22 @@ class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UI
     @IBOutlet weak var sunriseLabel: UILabel!
     @IBOutlet weak var sunsetLabel: UILabel!
     @IBOutlet weak var sunView: UIView!
+    @IBOutlet weak var detailView: UIView!
     
+    @IBOutlet weak var rainLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         rainChanceCollectionView.dataSource = self
         rainChanceCollectionView.delegate = self
         
-        ViewModel.getCurrentWeatherData(onSuccess: { WeatherModel in
+        viewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.getMainDetails()
                 self.getSys()
             }
-        }, onError: {error in
-            print(error!.localizedDescription)
         })
         
-        ViewModel.getForecastWeatherData(onSuccess: { forecast in
+        viewModel.getForecastWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.rainChanceCollectionView.reloadData()
             }
@@ -42,41 +42,20 @@ class OtherDetailsViewController: UIViewController, UICollectionViewDelegate, UI
             print(error!.localizedDescription)
         })
         
-        sunView.createGradientLayer(color1: .systemOrange, color2: .systemIndigo, x:0, y:0 , width: Int(UIScreen.main.bounds.width), height: 142)
+        detailView.createGradientLayer(startColor: .white, middleColor: .clear, endColor: .systemTeal, xStartpoint: 0.5, yStartpoint: 0.0, xEndpoint: 0.5, yEndpoint: 1.0, width: Int(UIScreen.main.bounds.width), height: 160)
+        sunView.createGradientLayer(startColor: .systemOrange, middleColor: .clear, endColor: .systemIndigo, xStartpoint: 0.0, yStartpoint: 0.5, xEndpoint: 0.75, yEndpoint: 0.5, width: Int(UIScreen.main.bounds.width), height: 199)
+ 
+        
         let nib = UINib(nibName: "RainChanceCollectionViewCell", bundle: nil)
         rainChanceCollectionView.register(nib, forCellWithReuseIdentifier: "RainChanceCollectionViewCell")
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 60, height: 126)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ViewModel.forecastWeatherModel?.list?.count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = rainChanceCollectionView.dequeueReusableCell(withReuseIdentifier: "RainChanceCollectionViewCell", for: indexPath) as! RainChanceCollectionViewCell
-        
-        let rainData = ViewModel.forecastWeatherModel?.list?[indexPath.row].rain
-        cell.rainChanceLabel.text = String(format:"%.2f", rainData?.the3h ?? 0)
-        
-        let dtTime: Int = ViewModel.forecastWeatherModel?.list?[indexPath.row].dt ?? 0
-        cell.rainTimeLabel.text = dtTime.getForecastDate()
-        
-        cell.layer.cornerRadius = 10
-        cell.backgroundColor = UIColor.systemGroupedBackground
-        return cell
-    }
-}
-
-extension OtherDetailsViewController {
-    func getMainDetails() {
-        let main = ViewModel.currentWeatherModel?.main
+    func getMainDetails() { //setup/confurge
+        let main = viewModel.currentWeatherData?.main
         
         let humidity: Int = main?.humidity ?? 0
         let pressure: Int = main?.pressure ?? 0
-        let visibility: Int = ViewModel.currentWeatherModel?.visibility ?? 0
+        let visibility: Int = viewModel.currentWeatherData?.visibility ?? 0
         
         DispatchQueue.main.async {
             self.humidityLabel.text = "\(humidity)"
@@ -86,7 +65,7 @@ extension OtherDetailsViewController {
     }
     
     func getSys() {
-        let sys = ViewModel.currentWeatherModel?.sys
+        let sys = viewModel.currentWeatherData?.sys
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
         
@@ -101,4 +80,31 @@ extension OtherDetailsViewController {
             self.sunsetLabel.text = dateFormatter.string(from: sunsetTime)
         }
     }
+}
+
+extension OtherDetailsViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 60, height: 126)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.forecastData?.list?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = rainChanceCollectionView.dequeueReusableCell(withReuseIdentifier: "RainChanceCollectionViewCell", for: indexPath) as! RainChanceCollectionViewCell
+        
+        let rainData = viewModel.forecastData?.list?[indexPath.row].rain
+        cell.rainChanceLabel.text = String(format:"%.2f", rainData?.the3h ?? 0)
+        
+        let dtTime: Int = viewModel.forecastData?.list?[indexPath.row].dt ?? 0
+        cell.rainTimeLabel.text = dtTime.getForecastDate()
+        
+        cell.layer.cornerRadius = 10
+        cell.backgroundColor = .clear
+        return cell
+    }
+
+
 }
