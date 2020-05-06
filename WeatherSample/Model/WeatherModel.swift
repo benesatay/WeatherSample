@@ -82,3 +82,6 @@ struct Wind: Codable {
     let deg: Int?
 }
 
+struct TemperatureType: Codable {
+    let type: String?
+}

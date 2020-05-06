@@ -10,6 +10,10 @@ import UIKit
 
 class WindCollectionViewCell: UICollectionViewCell {
 
+    @IBOutlet weak var windDegImage: UIImageView!
+    @IBOutlet weak var windDegLabel: UILabel!
+    @IBOutlet weak var windSpeedLabel: UILabel!
+    @IBOutlet weak var windTimeLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

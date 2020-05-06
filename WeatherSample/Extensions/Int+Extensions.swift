@@ -9,10 +9,10 @@
 import UIKit
 
 extension Int {
-    func getForecastDate() -> String {
+    func getForecastDate(with format: String) -> String {
         let nextTempTime = Date(timeIntervalSince1970: TimeInterval(self))
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.dateFormat = format
         return dateFormatter.string(from: nextTempTime)
     }
 }

@@ -12,7 +12,7 @@ class CurrentWeatherViewController: UIViewController {
     
     var viewModel = WeatherViewModel()
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var segmentIndex: Int?
     
     @IBOutlet weak var weatherIconImageView: UIImageView!
     @IBOutlet weak var cityNameLabel: UILabel!
@@ -21,48 +21,71 @@ class CurrentWeatherViewController: UIViewController {
     @IBOutlet weak var feelslikeLabel: UILabel!
     @IBOutlet weak var currentTempMaxLabel: UILabel!
     @IBOutlet weak var currentTempMinLabel: UILabel!
-    @IBOutlet weak var currentDateLabel: UILabel!
+    @IBOutlet weak var currentDayLabel: UILabel!
+    @IBOutlet weak var currentTimeLabel: UILabel!
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var descriptionLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.setBackgroundImage()
-        self.activityIndicator.isHidden = false
         
-        setCurrentWeatherData()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(setCurrentWeatherData), name: NSNotification.Name(rawValue: "newCity"), object: nil)
-    }
-    
-    @objc func setCurrentWeatherData() {
         viewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
-                self.setWeatherMain()
-                self.setWeather()
-                self.activityIndicator.isHidden = true
+                self.viewModel.getUnitCoreData(compHandler: {
+                    DispatchQueue.main.async {
+                        print(self.viewModel.selectedUnitArray[0])
+                        if !self.viewModel.selectedUnitArray.isEmpty {
+                            self.segmentIndex = self.viewModel.selectedUnitArray[0]
+                        } else {
+                            self.segmentIndex = 0
+                        }
+                        
+                        if self.segmentIndex == 0 {
+                            self.getAsCelcius()
+                        } else {
+                            self.getAsFahrenheit()
+                        }
+                        self.setWeather()
+                    }
+                })
             }
         })
     }
     
-    func setWeatherMain() {
-        let main = viewModel.currentWeatherData?.main
-        
-        let temp = main?.temp
-        let feels_like = main?.feels_like
-        let temp_max = main?.temp_max
-        let temp_min = main?.temp_min
-        
-        self.currentTemperatureLabel.text = String(format:"%.0f", temp!).appending("°C")
-        self.feelslikeLabel.text = String(format:"%.0f", feels_like!).appending("°")
-        self.currentTempMaxLabel.text = String(format:"%.0f", temp_max!).appending("°")
-        self.currentTempMinLabel.text = String(format:"%.0f", temp_min!).appending("°")
-        
-        self.currentDateLabel.text = self.setDate()
+    @objc func getAsCelcius() {
+        setupWeatherMain(onSuccess: {(temperature, feelsLike, maxTemperature, minTemperature) in
+            self.fillLabels(temp: temperature, feels_like: feelsLike, temp_max: maxTemperature, temp_min: minTemperature)
+        })
+    }
+    
+    @objc func getAsFahrenheit() {
+        let f_Temperature: Double = 0.0
+        let f_FeelsLike: Double = 0.0
+        let f_MaxTemperature: Double = 0.0
+        let f_MinTemperature: Double = 0.0
+        setupWeatherMain(onSuccess: { (temperature, feelsLike, maxTemperature, minTemperature) in
+            let fahrenheitTemp = f_Temperature.convertToFahrenheit(with: temperature)
+            let fahrenheitFeels_like = f_FeelsLike.convertToFahrenheit(with: feelsLike)
+            let fahrenheitTemp_max = f_MaxTemperature.convertToFahrenheit(with: maxTemperature)
+            let fahrenheitTemp_min = f_MinTemperature.convertToFahrenheit(with: minTemperature)
+            self.fillLabels(temp: fahrenheitTemp, feels_like: fahrenheitFeels_like, temp_max: fahrenheitTemp_max, temp_min: fahrenheitTemp_min)
+        })
+    }
+    
+    func fillLabels(temp: Double, feels_like: Double, temp_max: Double, temp_min: Double) {
+        self.currentTemperatureLabel.text = String(format:"%.0f", temp).appending("°C")
+        self.feelslikeLabel.text = "Feels like " + String(format:"%.0f", feels_like).appending("°")
+        self.currentTempMaxLabel.text = "Max " + String(format:"%.0f", temp_max).appending("°")
+        self.currentTempMinLabel.text = "Min " + String(format:"%.0f", temp_min).appending("°")
+        let currentDate = Date().setDate(with: "dd/MM E")
+        self.currentDayLabel.text = currentDate
+        let currentTime = Date().setDate(with: "HH:mm")
+        self.currentTimeLabel.text = currentTime
         self.cityNameLabel.text = viewModel.currentWeatherData?.name!
     }
+    
+    
     
     func setWeather() {
         let weather = viewModel.currentWeatherData?.weather
@@ -75,15 +98,15 @@ class CurrentWeatherViewController: UIViewController {
         })
     }
 }
+
+
 extension CurrentWeatherViewController {
-    func setDate() -> String {
-        let currentDate = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM HH:mm E"
-        let currentTime = dateFormatter.string(from: currentDate)
-        print(currentTime)
-        return currentTime
+    func setupWeatherMain(onSuccess: @escaping (Double, Double, Double, Double) -> Void) {
+        let main = viewModel.currentWeatherData?.main
+        guard let temp = main?.temp else { return }
+        guard let feels_like = main?.feels_like else { return }
+        guard let temp_max = main?.temp_max else { return }
+        guard let temp_min = main?.temp_min else { return }
+        onSuccess(temp, feels_like, temp_max, temp_min)
     }
 }
-
-

@@ -9,7 +9,8 @@
 import Foundation
 
 let apikey: String = "&APPID=52fac2e571e411a42fedbe9676d8824c"
-let unitAndLangAppendix: String = "&units=metric&lang=tr"
+let unit: String = "&units=metric"
+let lang: String = "&lang=tr"
 let currentWeatherBaseURL: String = "http://api.openweathermap.org/data/2.5/weather?q="
 //let currentWeatherBaseURL: String = "http://api.openweathermap.org/data/2.5/weather?q=İzmir"
 let nextWeatherBaseURL: String = "http://api.openweathermap.org/data/2.5/forecast?q="

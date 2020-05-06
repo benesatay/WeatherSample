@@ -9,36 +9,41 @@
 import UIKit
 import CoreData
 
-
 class WeatherViewController: UIViewController {
-    
+   
     let viewModel = WeatherViewModel()
-    
+    let coreDataOperations = CoreDataOperations()
+
     let tableview = UITableView()
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    
-    var searchActive: Bool = false
+    var searching: Bool = false
     var cityNameArray: [String] = []
     var filteredCity: [String] = []
     
+    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var currentWeatherView: UIView!
+    @IBOutlet weak var currentWeatherDetailView: UIView!
+    @IBOutlet weak var forecastWeatherView: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var searchBar: UISearchBar!
-    
-    @IBOutlet weak var currentDayCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        activityIndicator.isHidden = false
         searchBar.delegate = self
         tableview.delegate = self
         tableview.dataSource = self
-        currentDayCollectionView.delegate = self
-        currentDayCollectionView.dataSource = self
         
         setNavigationController()
-        setBackground()
-        
+        //self.view.setBackgroundImage()
         tableview.isHidden = true
-        setSubview()
+        
+        DispatchQueue.main.async {
+            self.setTableViewSubview()
+        }
+        setupSubviews()
         
         viewModel.getTRcityList(onSuccess: {
             for city in (self.viewModel.cityData?.trcitylist!)! {
@@ -47,17 +52,31 @@ class WeatherViewController: UIViewController {
             }
         })
         
-        let nib = UINib(nibName: "CollectionViewCell", bundle: nil)
-        currentDayCollectionView.register(nib, forCellWithReuseIdentifier: "CollectionViewCell")
+
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(setupSubviews), name: NSNotification.Name(rawValue: "deleted"), object: nil)
     }
     
-    func setBackground() {
-        //view background
-        let customOrange = UIColor(red:250/255, green:198/255, blue:97/255, alpha:1.0)
-        self.view.createGradientLayer(startColor: customOrange, middleColor: .clear, endColor: customOrange, xStartpoint: 0.5, yStartpoint: 0.0, xEndpoint: 0.5, yEndpoint: 1.0, width: Int(UIScreen.main.bounds.width), height: 500)
-        
-        //collectionview background
-        currentDayCollectionView.backgroundColor = .clear
+    @objc func setupSubviews() {
+        viewModel.getCurrentWeatherData(onSuccess: {
+            DispatchQueue.main.async {
+                self.setMainBackground()
+                self.setCurrentWeatherSubview()
+                self.setCurrentWeatherDetailSubview()
+                self.setForecastTempSubview()
+                self.setForecastWindSubview()
+                self.setSunTimeSubview()
+                self.activityIndicator.isHidden = true
+            }
+        })
+    }
+    
+    @IBAction func selectedCityList(_ sender: Any) {
+        passToCityList()
+    }
+    func passToCityList() {
+        let destination = SelectedCitiesViewController(nibName: "SelectedCitiesViewController", bundle: nil)
+        self.navigationController?.pushViewController(destination, animated: true)
     }
     
     func setNavigationController() {
@@ -67,55 +86,44 @@ class WeatherViewController: UIViewController {
         self.navigationController?.view.backgroundColor = UIColor.clear
     }
     
-    func setSubview() {
-        
-        let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
-        tableview.frame = viewFrame
-        tableview.backgroundColor = .systemGroupedBackground
-        tableview.layer.cornerRadius = 10
-        view.addSubview(tableview)
-        tableview.didMoveToSuperview()
-        UICollectionView.animate(withDuration: 0.3) {
-            self.tableview.transform = CGAffineTransform(translationX: 0, y: 100)
+    
+    
+    func setupAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        self.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+            alert.dismiss(animated: true, completion: nil)
         }
-        
     }
     
-    func saveCityData(value: Any?) {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        guard context != nil else { return }
-        let newCity = NSEntityDescription.insertNewObject(forEntityName: "Cities", into: context)
-        newCity.setValue(value, forKey: "name")
-        do {
-            try context.save()
-        } catch {
-            print("context error")
-        }
+    func cityAddedAlert() {
+        setupAlert(title: "Success", message: "City was added")
     }
 }
 
 extension WeatherViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchActive = true
-        tableview.isHidden = false
+        searching = true
         searchBar.showsCancelButton = true
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        searchActive = false
+        searching = false
+        tableview.isHidden = true
         searchBar.showsCancelButton = true
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
+        searching = false
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
         searchBar.text = nil
-        tableview.isHidden = true
+        self.filteredCity.removeAll()
+        searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
+        searching = false
+        tableview.isHidden = true
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -124,20 +132,20 @@ extension WeatherViewController: UISearchBarDelegate {
             let range = tmp.range(of: searchText, options: .caseInsensitive)
             return range.location != NSNotFound
         })
-        if(filteredCity.count == 0){
-            searchActive = false;
-        } else {
-            searchActive = true;
-        }
-        
-        tableview.reloadData()
         tableview.isHidden = false
+        if filteredCity.isEmpty {
+            searching = false;
+        } else {
+            
+            searching = true;
+        }
+        tableview.reloadData()
     }
 }
 
 extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if(searchActive) {
+        if(searching) {
             return filteredCity.count
         }
         return cityNameArray.count
@@ -145,7 +153,7 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        if filteredCity.count > 0 {
+        if !filteredCity.isEmpty {
             cell.textLabel?.text = filteredCity[indexPath.row]
         } else {
             cell.textLabel?.text = cityNameArray[indexPath.row]
@@ -156,62 +164,198 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(searchActive){
-            saveCityData(value: filteredCity[indexPath.row])
-            print("added")
-            tableview.removeFromSuperview()
-        }
-        else {
-            saveCityData(value: cityNameArray[indexPath.row])
-            print("added")
-            tableView.removeFromSuperview()
-        }
-    }
-}
-
-extension WeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        var size = CGSize(width: 0, height: 0)
-        if indexPath.row == 1 {
-            size = CGSize(width: UIScreen.main.bounds.width, height: 200)
-        } else if indexPath.row == 2 {
-            size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        if !filteredCity.isEmpty {
+            coreDataOperations.saveNewObject(value: filteredCity[indexPath.row], onSuccess: {
+                self.setupAlert(title: "Success!", message: "City was added")
+                self.setupSubviews()
+            }, entityAlert: {
+                self.setupAlert(title: "Warning!", message: "City already was added")
+            })
         } else {
-            size = CGSize(width: UIScreen.main.bounds.width, height: 500)
+            coreDataOperations.saveNewObject(value: cityNameArray[indexPath.row], onSuccess: {
+                self.setupAlert(title: "Success!", message: "City was added")
+                self.setupSubviews()
+            }, entityAlert: {
+                self.setupAlert(title: "Warning!", message: "City already was added")
+            })
         }
-        return size
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let  cell = currentDayCollectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCell", for: indexPath) as! CollectionViewCell
-        if indexPath.row == 1 {
-            let nib = NextWeatherViewController(nibName: "NextWeatherViewController", bundle: nil)
-            cell.addSubview(nib.view)
-            addChild(nib)
-        } else if indexPath.row == 2 {
-            let nib = OtherDetailsViewController(nibName: "OtherDetailsViewController", bundle: nil)
-            cell.addSubview(nib.view)
-            addChild(nib)
-        }else {
-            let nib = CurrentWeatherViewController(nibName: "CurrentWeatherViewController", bundle: nil)
-            cell.addSubview(nib.view)
-        }
-        cell.backgroundColor = .white
-        return cell
+        self.searchBar.resignFirstResponder()
+        
+        self.filteredCity.removeAll()
+        self.tableview.reloadData()
+        
+        self.searchBar.endEditing(true)
+        self.searchBar.text = nil
     }
 }
 
-extension WeatherViewController: UIScrollViewDelegate {
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        print(scrollView.contentOffset.y)
+extension WeatherViewController {
+    func setSubview(with nib: UIViewController, viewFrame: CGRect) {
+        nib.view.frame = viewFrame
+        contentView.addSubview(nib.view)
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let shouldHide = scrollView.contentOffset.y > 100
-        //        navigationController?.setNavigationBarHidden(shouldHide, animated: true)
+    //MARK: CurrentWeatherViewController
+    func setCurrentWeatherSubview() {
+        let destination = CurrentWeatherViewController(nibName: "CurrentWeatherViewController", bundle: nil)
+        setBackgroundImage(with: destination)
+        setBackgroundColor(with: destination,
+                           dayStartColor: .cyan,
+                           dayEndColor: .systemTeal,
+                           nightStartColor: .clear,
+                           nightEndColor: .clear,
+                           height: 500)
+        
+        setSegmentedControllSubview(with: destination)
+        let viewFrame = CGRect(x: 0, y: 60, width: contentView.bounds.width, height: 500)
+        setSubview(with: destination, viewFrame: viewFrame)
+    }
+
+    
+    //MARK: CurrentWeatherDetailViewController
+    func setCurrentWeatherDetailSubview() {
+        let destination = CurrentWeatherDetailsViewController(nibName: "CurrentWeatherDetailsViewController", bundle: nil)
+        setBackgroundColor(with: destination,
+                           dayStartColor: .systemTeal,
+                           dayEndColor: .systemPurple,
+                           nightStartColor: .black,
+                           nightEndColor: .systemIndigo,
+                           height: 185)
+        let viewFrame = CGRect(x: 0, y: 560, width: contentView.bounds.width, height: 185)
+        setSubview(with: destination, viewFrame: viewFrame)
+    }
+    
+    //MARK: ForecastTempViewController
+    func setForecastTempSubview() {
+        let destination = ForecastTempViewController(nibName: "ForecastTempViewController", bundle: nil)
+        setBackgroundColor(with: destination,
+                           dayStartColor: .systemPurple,
+                           dayEndColor: UIColor(red: 137/255, green: 68/255, blue: 171/255, alpha: 1.0),
+                           nightStartColor: .systemIndigo,
+                           nightEndColor: .systemPurple,
+                           height: 161)
+        let viewFrame = CGRect(x: 0, y: 745, width: contentView.bounds.width, height: 161)
+        setSubview(with: destination ,viewFrame: viewFrame)
+        addChild(destination)
+    }
+    
+    //MARK: ForecastWindViewController
+    func setForecastWindSubview() {
+        let destination = ForecastWindViewController(nibName: "ForecastWindViewController", bundle: nil)
+        setBackgroundColor(with: destination,
+                           dayStartColor: UIColor(red: 137/255, green: 68/255, blue: 171/255, alpha: 1.0),
+                           dayEndColor: .systemIndigo,
+                           nightStartColor: .systemPurple,
+                           nightEndColor: .systemTeal,
+                           height: 256)
+        let viewFrame = CGRect(x: 0, y: 906, width: contentView.bounds.width, height: 256)
+        setSubview(with: destination, viewFrame: viewFrame)
+        addChild(destination)
+    }
+    
+    //MARK: SunTimeViewController
+    func setSunTimeSubview() {
+        let destination = SunTimeViewController(nibName: "SunTimeViewController", bundle: nil)
+        setBackgroundColor(with: destination,
+                           dayStartColor: .systemIndigo,
+                           dayEndColor: UIColor(red: 54/255, green: 52/255, blue: 163/255, alpha: 1.0),
+                           nightStartColor: .systemTeal,
+                           nightEndColor: .white,
+                           height: 199)
+        let viewFrame = CGRect(x: 0, y: 1162, width: contentView.bounds.width, height: 140)
+        setSubview(with: destination, viewFrame: viewFrame)
+        addChild(destination)
+    }
+    
+    //MARK: Tableview
+    func setTableViewSubview() {
+        let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
+        tableview.frame = viewFrame
+        tableview.backgroundColor = .systemGroupedBackground
+        tableview.layer.cornerRadius = 10
+        view.addSubview(tableview)
+        tableview.didMoveToSuperview()
+        UICollectionView.animate(withDuration: 0.3) {
+            self.tableview.transform = CGAffineTransform(translationX: 0, y: 100)
+        }
+    }
+}
+
+extension WeatherViewController {
+    func setMainBackground() {
+        setBackgroundColor(with: self, dayStartColor: .cyan, dayEndColor: .cyan, nightStartColor: .black, nightEndColor: .black, height: 500)
+    }
+    
+    func setBackgroundColor(with destination: UIViewController, dayStartColor: UIColor, dayEndColor: UIColor, nightStartColor: UIColor, nightEndColor: UIColor, height: Int) {
+        setTimeForBackground(completionHandler: {(currentDate, sunriseString, sunsetString) in
+            if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
+                destination.view.createGradientLayer(startColor: dayStartColor, endColor: dayEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+            } else {
+                destination.view.createGradientLayer(startColor: nightStartColor, endColor: nightEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+                UILabel.appearance().textColor = .white
+            }
+        })
+    }
+    
+    func setBackgroundImage(with destination: UIViewController) {
+        setTimeForBackground(completionHandler: { (currentDate, sunriseString, sunsetString) in
+            if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
+                destination.view.setBackground(with: "newdaymoon")
+            } else {
+                destination.view.setBackground(with: "bloodmoon")
+            }
+        })
+    }
+    
+    func setTimeForBackground(completionHandler: @escaping (String, String, String) -> Void) {
+        guard let sunrise = viewModel.currentWeatherData?.sys?.sunrise else { return }
+        guard let sunset = viewModel.currentWeatherData?.sys?.sunset else { return }
+        let sunriseString = sunrise.getForecastDate(with: "HHmm")
+        let sunsetString = sunset.getForecastDate(with: "HHmm")
+        let currentDate = Date().setDate(with: "HHmm")
+        completionHandler(currentDate, sunriseString, sunsetString)
+    }
+}
+
+extension WeatherViewController {
+    
+    
+    
+    func setSegmentedControllSubview(with nib: UIViewController) {
+        let segmentedItems = ["°C", "°F"]
+        let segmentedControl = UISegmentedControl(items: segmentedItems)
+        segmentedControl.frame = CGRect(x: UIScreen.main.bounds.width-116, y: 0, width: 100, height: 30)
+        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
+        
+        viewModel.getUnitCoreData(compHandler: {
+            if !self.viewModel.selectedUnitArray.isEmpty {
+                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitArray[0]
+                print("self.viewModel.selectedUnitArray[0]",self.viewModel.selectedUnitArray[0])
+            } else {
+                segmentedControl.selectedSegmentIndex = 0
+            }
+        })
+        nib.view.addSubview(segmentedControl)
+    }
+ 
+    @objc func segmentAction(_ segmentedControl: UISegmentedControl) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            print("c")
+          
+            coreDataOperations.saveNewUnitObject(value: 0, onSuccess: {
+                self.setupSubviews()
+            })
+            
+          
+        case 1:
+            print("f")
+            
+            coreDataOperations.saveNewUnitObject(value: 1, onSuccess: {
+                self.setupSubviews()
+            })
+        default:
+            break
+        }
     }
 }
