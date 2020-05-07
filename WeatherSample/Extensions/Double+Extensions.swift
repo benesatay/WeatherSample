@@ -10,7 +10,6 @@ import UIKit
 
 extension Double {
     func convertToFahrenheit(with celcius: Double) -> Double {
-        let fahrenheit = (celcius * 1.8) + 32.0
-        return fahrenheit
+        return (celcius * 1.8) + 32.0
     }
 }

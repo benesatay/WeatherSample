@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WindCollectionViewCell: UICollectionViewCell {
+class ForecastWindCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var windDegImage: UIImageView!
     @IBOutlet weak var windDegLabel: UILabel!

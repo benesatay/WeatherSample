@@ -9,15 +9,12 @@
 import UIKit
 
 class ForecastTempViewController: UIViewController {
+    
     let viewModel = WeatherViewModel()
 
     @IBOutlet weak var forecastTempCollectionView: UICollectionView!
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-
         forecastTempCollectionView.dataSource = self
         forecastTempCollectionView.delegate = self
         
@@ -31,34 +28,61 @@ class ForecastTempViewController: UIViewController {
         
         let nib = UINib(nibName: "ForecastTempCollectionViewCell", bundle: nil)
         forecastTempCollectionView.register(nib, forCellWithReuseIdentifier: "ForecastTempCollectionViewCell")
-        
+    }
+    
+    func getAsFahrenheit(with indexPath: IndexPath, onSuccess: @escaping (Double) -> Void) {
+        var fahrenheitForecastTemp: Double = 0.0
+        getAsCelcius(with: indexPath, onSuccess: { (forecastTemp) in
+            fahrenheitForecastTemp = fahrenheitForecastTemp.convertToFahrenheit(with: forecastTemp)
+            onSuccess(fahrenheitForecastTemp)
+        })
+    }
+    
+    func getAsCelcius(with indexPath: IndexPath, onSuccess: @escaping (Double) -> Void) {
+        guard let forecastTemp = viewModel.forecastData?.list?[indexPath.row].main?.temp else { return }
+        onSuccess(forecastTemp)
+    }
+    
+    func fillTempCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
+        self.viewModel.getUnitCoreData(compHandler: {
+            DispatchQueue.main.async {
+                if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+                    switch self.viewModel.selectedUnitSegmentIndexArray[0] {
+                    case 0:
+                        self.getAsCelcius(with: indexPath, onSuccess: { (forecast) in
+                            cell.forecastWeatherTempLabel.text = String(format:"%.0f", forecast).appending("°")
+                        })
+                    case 1:
+                        self.getAsFahrenheit(with: indexPath, onSuccess: { (forecast) in
+                            cell.forecastWeatherTempLabel.text = String(format:"%.0f", forecast).appending("°")
+                        })
+                    default:
+                        break
+                    }
+                }
+            }
+        })
     }
 
+    func setupCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
+        cell.layer.cornerRadius = 20
+        cell.backgroundColor = .clear
 
-    func setup(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
+        fillTempCell(to: cell, with: indexPath)
         
         let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
-        let forecastWeatherMain = forecastWeatherList?.main
-        
-        let nextTemp: Double = forecastWeatherMain?.temp ?? 0
-        cell.forecastWeatherTempLabel.text = String(format:"%.0f", nextTemp).appending("°")
-        
-        let dtTime: Int = viewModel.forecastData?.list?[indexPath.row].dt ?? 0
+
+        guard let dtTime = forecastWeatherList?.dt else { return }
         cell.forecastWeatherTimeLabel.text = dtTime.getForecastDate(with: "HH:mm")
         
-        let rainVolume = forecastWeatherList?.rain
-        cell.forecastRainVolumeLabel.text = String(format:"%.2f", rainVolume?.the3h ?? 0)
+        guard let rainVolume = forecastWeatherList?.rain else { return }
+        cell.forecastRainVolumeLabel.text = String(format:"%.2f", rainVolume.the3h ?? 0)
         
         viewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { imageView in
             DispatchQueue.main.async {
                 cell.forecastWeatherImageView.image = imageView
             }
         })
-        
-        cell.layer.cornerRadius = 20
-        
-        cell.backgroundColor = .clear
-        
     }
 }
 
@@ -74,7 +98,7 @@ extension ForecastTempViewController: UICollectionViewDataSource, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = forecastTempCollectionView.dequeueReusableCell(withReuseIdentifier: "ForecastTempCollectionViewCell", for: indexPath) as! ForecastTempCollectionViewCell
         
-        setup(to: cell, with: indexPath)
+        setupCell(to: cell, with: indexPath)
         return cell
         
     }

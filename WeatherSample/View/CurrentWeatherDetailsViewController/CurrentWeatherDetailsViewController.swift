@@ -18,30 +18,24 @@ class CurrentWeatherDetailsViewController: UIViewController {
     @IBOutlet weak var humidityLabel: UILabel!
     @IBOutlet weak var pressureLabel: UILabel!
     @IBOutlet weak var visibilityLabel: UILabel!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
         viewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
-                self.getMainDetails()
+                self.setWeatherMainDetailsData()
             }
         })
     }
     
-    func getMainDetails() { //setup/confurge
+    func setWeatherMainDetailsData() {
         let main = viewModel.currentWeatherData?.main
-        
         let humidity: Int = main?.humidity ?? 0
         let pressure: Int = main?.pressure ?? 0
         let visibility: Int = viewModel.currentWeatherData?.visibility ?? 0
-        
         DispatchQueue.main.async {
             self.humidityLabel.text = "\(humidity)"
             self.pressureLabel.text = "\(pressure)"
             self.visibilityLabel.text = "\(visibility)"
         }
     }
-    
-    
 }

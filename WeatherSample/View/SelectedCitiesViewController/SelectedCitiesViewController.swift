@@ -11,14 +11,16 @@ import CoreData
 
 class SelectedCitiesViewController: UIViewController {
     
-    var coreDataOperations = CoreDataOperations()
     var viewModel = WeatherViewModel()
+    var coreDataOperations = CoreDataOperations()
+    let setAlert = SetupAlert()
     var selectedCityArray: [String] = []
+    
+    var choosedCity: String = ""
     
     @IBOutlet weak var selectedCitiesTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-
         selectedCitiesTableView.delegate = self
         selectedCitiesTableView.dataSource = self
         viewModel.getCityCoreData(compHandler: {
@@ -30,6 +32,10 @@ class SelectedCitiesViewController: UIViewController {
     }
     
     @IBAction func backBarButton(_ sender: Any) {
+        turnToWeather()
+    }
+    
+    func turnToWeather() {
         navigationController?.popViewController(animated: true)
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "deleted"), object: nil)
     }
@@ -37,16 +43,8 @@ class SelectedCitiesViewController: UIViewController {
         coreDataOperations.clearCityList(onSuccess: {
             self.selectedCityArray.removeAll()
             self.selectedCitiesTableView.reloadData()
-            self.deletedCityAlert()
+            self.setAlert.setupAlert(with: self, title: "Success", message: "Deleted")
         })
-    }
-    
-    func deletedCityAlert() {
-        let alert = UIAlertController(title: "Success", message: "Deleted", preferredStyle: .alert)
-        self.present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            alert.dismiss(animated: true, completion: nil)
-        }
     }
 }
 
@@ -66,11 +64,24 @@ extension SelectedCitiesViewController: UITableViewDelegate, UITableViewDataSour
             coreDataOperations.removeSelectedCity(index: indexPath.row, onSuccess: {
                 self.selectedCityArray.remove(at: indexPath.row)
                 self.selectedCitiesTableView.reloadData()
-                self.deletedCityAlert()
-                //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "deleted"), object: nil)
+                self.setAlert.setupAlert(with: self, title: "Success", message: "Deleted")
             }, onError: {
                 print("delete error")
             })
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        coreDataOperations.removeSelectedCity(index: indexPath.row, onSuccess: {
+            self.choosedCity = self.selectedCityArray[indexPath.row]
+            self.selectedCityArray.remove(at: indexPath.row)
+            self.coreDataOperations.saveNewCity(value: self.choosedCity, onSuccess: {
+                self.turnToWeather()
+            }, entityAlert: {
+                self.setAlert.setupAlert(with: self, title: "Error", message: "City could not selected")
+            })
+        }, onError: {
+            self.setAlert.setupAlert(with: self, title: "Error", message: "City could not selected")
+        })
     }
 }

@@ -10,41 +10,40 @@ import UIKit
 import CoreData
 
 class WeatherViewController: UIViewController {
-   
+    
+    let setAlert = SetupAlert()
     let viewModel = WeatherViewModel()
     let coreDataOperations = CoreDataOperations()
-
-    let tableview = UITableView()
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
+    let setupSubview = SetupSubviews()
+  
     var searching: Bool = false
     var cityNameArray: [String] = []
     var filteredCity: [String] = []
     
+    let tableview = UITableView()
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var currentWeatherView: UIView!
     @IBOutlet weak var currentWeatherDetailView: UIView!
     @IBOutlet weak var forecastWeatherView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var searchBar: UISearchBar!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         activityIndicator.isHidden = false
+        setNavigationController()
+        
         searchBar.delegate = self
         tableview.delegate = self
         tableview.dataSource = self
         
-        setNavigationController()
-        //self.view.setBackgroundImage()
         tableview.isHidden = true
-        
         DispatchQueue.main.async {
             self.setTableViewSubview()
         }
-        setupSubviews()
-        
+        setSubviews()
+
         viewModel.getTRcityList(onSuccess: {
             for city in (self.viewModel.cityData?.trcitylist!)! {
                 self.cityNameArray.append(city.name!)
@@ -52,32 +51,17 @@ class WeatherViewController: UIViewController {
             }
         })
         
-
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(setupSubviews), name: NSNotification.Name(rawValue: "deleted"), object: nil)
-    }
-    
-    @objc func setupSubviews() {
-        viewModel.getCurrentWeatherData(onSuccess: {
-            DispatchQueue.main.async {
-                self.setMainBackground()
-                self.setCurrentWeatherSubview()
-                self.setCurrentWeatherDetailSubview()
-                self.setForecastTempSubview()
-                self.setForecastWindSubview()
-                self.setSunTimeSubview()
-                self.activityIndicator.isHidden = true
-            }
-        })
+        NotificationCenter.default.addObserver(self, selector: #selector(setSubviews), name: NSNotification.Name(rawValue: "deleted"), object: nil)
     }
     
     @IBAction func selectedCityList(_ sender: Any) {
-        passToCityList()
-    }
+          passToCityList()
+      }
+    
     func passToCityList() {
-        let destination = SelectedCitiesViewController(nibName: "SelectedCitiesViewController", bundle: nil)
-        self.navigationController?.pushViewController(destination, animated: true)
-    }
+         let destination = SelectedCitiesViewController(nibName: "SelectedCitiesViewController", bundle: nil)
+         self.navigationController?.pushViewController(destination, animated: true)
+     }
     
     func setNavigationController() {
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
@@ -86,18 +70,42 @@ class WeatherViewController: UIViewController {
         self.navigationController?.view.backgroundColor = UIColor.clear
     }
     
-    
-    
-    func setupAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        self.present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            alert.dismiss(animated: true, completion: nil)
-        }
+    @objc func setSubviews() {
+        viewModel.getCurrentWeatherData(onSuccess: {
+            DispatchQueue.main.async {
+                self.setMainBackground()
+                self.setupSubview.setCurrentWeatherSubview(with: self, with: self.contentView)
+                self.setupSubview.setCurrentWeatherDetailSubview(with: self, with: self.contentView)
+                self.setupSubview.setForecastTempSubview(with: self, with: self.contentView)
+                self.setupSubview.setForecastWindSubview(with: self, with: self.contentView)
+                self.setupSubview.setSunTimeSubview(with: self, with: self.contentView)
+                self.activityIndicator.isHidden = true
+            }
+        })
     }
     
-    func cityAddedAlert() {
-        setupAlert(title: "Success", message: "City was added")
+    func setMainBackground() {
+        setBackgroundColor(with: self,
+                           dayStartColor: .cyan,
+                           dayEndColor: .cyan,
+                           nightStartColor: .black,
+                           nightEndColor: .black,
+                           height: Int(UIScreen.main.bounds.height))
+    }
+    
+    @objc func segmentAction(_ segmentedControl: UISegmentedControl) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            coreDataOperations.saveNewUnit(value: 0, onSuccess: {
+                self.setSubviews()
+            })
+        case 1:
+            coreDataOperations.saveNewUnit(value: 1, onSuccess: {
+                self.setSubviews()
+            })
+        default:
+            break
+        }
     }
 }
 
@@ -165,18 +173,18 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !filteredCity.isEmpty {
-            coreDataOperations.saveNewObject(value: filteredCity[indexPath.row], onSuccess: {
-                self.setupAlert(title: "Success!", message: "City was added")
-                self.setupSubviews()
+            coreDataOperations.saveNewCity(value: filteredCity[indexPath.row], onSuccess: {
+                self.setAlert.setupAlert(with: self, title: "Success!", message: "City was added")
+                self.setSubviews()
             }, entityAlert: {
-                self.setupAlert(title: "Warning!", message: "City already was added")
+                self.setAlert.setupAlert(with: self, title: "Warning!", message: "City already was added")
             })
         } else {
-            coreDataOperations.saveNewObject(value: cityNameArray[indexPath.row], onSuccess: {
-                self.setupAlert(title: "Success!", message: "City was added")
-                self.setupSubviews()
+            coreDataOperations.saveNewCity(value: cityNameArray[indexPath.row], onSuccess: {
+                self.setAlert.setupAlert(with: self, title: "Success!", message: "City was added")
+                self.setSubviews()
             }, entityAlert: {
-                self.setupAlert(title: "Warning!", message: "City already was added")
+                self.setAlert.setupAlert(with: self, title: "Warning!", message: "City already was added")
             })
         }
         self.searchBar.resignFirstResponder()
@@ -190,81 +198,23 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension WeatherViewController {
-    func setSubview(with nib: UIViewController, viewFrame: CGRect) {
-        nib.view.frame = viewFrame
-        contentView.addSubview(nib.view)
-    }
-    
-    //MARK: CurrentWeatherViewController
-    func setCurrentWeatherSubview() {
-        let destination = CurrentWeatherViewController(nibName: "CurrentWeatherViewController", bundle: nil)
-        setBackgroundImage(with: destination)
-        setBackgroundColor(with: destination,
-                           dayStartColor: .cyan,
-                           dayEndColor: .systemTeal,
-                           nightStartColor: .clear,
-                           nightEndColor: .clear,
-                           height: 500)
+    //MARK: SegmentedControl
+    func setSegmentedControllSubview(with nib: UIViewController) {
+        let segmentedItems = ["°C", "°F"]
+        let segmentedControl = UISegmentedControl(items: segmentedItems)
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.systemBlue], for: .normal)
         
-        setSegmentedControllSubview(with: destination)
-        let viewFrame = CGRect(x: 0, y: 60, width: contentView.bounds.width, height: 500)
-        setSubview(with: destination, viewFrame: viewFrame)
-    }
-
-    
-    //MARK: CurrentWeatherDetailViewController
-    func setCurrentWeatherDetailSubview() {
-        let destination = CurrentWeatherDetailsViewController(nibName: "CurrentWeatherDetailsViewController", bundle: nil)
-        setBackgroundColor(with: destination,
-                           dayStartColor: .systemTeal,
-                           dayEndColor: .systemPurple,
-                           nightStartColor: .black,
-                           nightEndColor: .systemIndigo,
-                           height: 185)
-        let viewFrame = CGRect(x: 0, y: 560, width: contentView.bounds.width, height: 185)
-        setSubview(with: destination, viewFrame: viewFrame)
-    }
-    
-    //MARK: ForecastTempViewController
-    func setForecastTempSubview() {
-        let destination = ForecastTempViewController(nibName: "ForecastTempViewController", bundle: nil)
-        setBackgroundColor(with: destination,
-                           dayStartColor: .systemPurple,
-                           dayEndColor: UIColor(red: 137/255, green: 68/255, blue: 171/255, alpha: 1.0),
-                           nightStartColor: .systemIndigo,
-                           nightEndColor: .systemPurple,
-                           height: 161)
-        let viewFrame = CGRect(x: 0, y: 745, width: contentView.bounds.width, height: 161)
-        setSubview(with: destination ,viewFrame: viewFrame)
-        addChild(destination)
-    }
-    
-    //MARK: ForecastWindViewController
-    func setForecastWindSubview() {
-        let destination = ForecastWindViewController(nibName: "ForecastWindViewController", bundle: nil)
-        setBackgroundColor(with: destination,
-                           dayStartColor: UIColor(red: 137/255, green: 68/255, blue: 171/255, alpha: 1.0),
-                           dayEndColor: .systemIndigo,
-                           nightStartColor: .systemPurple,
-                           nightEndColor: .systemTeal,
-                           height: 256)
-        let viewFrame = CGRect(x: 0, y: 906, width: contentView.bounds.width, height: 256)
-        setSubview(with: destination, viewFrame: viewFrame)
-        addChild(destination)
-    }
-    
-    //MARK: SunTimeViewController
-    func setSunTimeSubview() {
-        let destination = SunTimeViewController(nibName: "SunTimeViewController", bundle: nil)
-        setBackgroundColor(with: destination,
-                           dayStartColor: .systemIndigo,
-                           dayEndColor: UIColor(red: 54/255, green: 52/255, blue: 163/255, alpha: 1.0),
-                           nightStartColor: .systemTeal,
-                           nightEndColor: .white,
-                           height: 199)
-        let viewFrame = CGRect(x: 0, y: 1162, width: contentView.bounds.width, height: 140)
-        setSubview(with: destination, viewFrame: viewFrame)
-        addChild(destination)
+        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
+        viewModel.getUnitCoreData(compHandler: {
+            if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitSegmentIndexArray[0]
+            } else {
+                segmentedControl.selectedSegmentIndex = 0
+            }
+        })
+        let viewFrame = CGRect(x: UIScreen.main.bounds.width-116, y: 0, width: 100, height: 30)
+        segmentedControl.frame = viewFrame
+        nib.view.addSubview(segmentedControl)
     }
     
     //MARK: Tableview
@@ -282,10 +232,7 @@ extension WeatherViewController {
 }
 
 extension WeatherViewController {
-    func setMainBackground() {
-        setBackgroundColor(with: self, dayStartColor: .cyan, dayEndColor: .cyan, nightStartColor: .black, nightEndColor: .black, height: 500)
-    }
-    
+    //MARK: Setup Background
     func setBackgroundColor(with destination: UIViewController, dayStartColor: UIColor, dayEndColor: UIColor, nightStartColor: UIColor, nightEndColor: UIColor, height: Int) {
         setTimeForBackground(completionHandler: {(currentDate, sunriseString, sunsetString) in
             if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
@@ -314,48 +261,5 @@ extension WeatherViewController {
         let sunsetString = sunset.getForecastDate(with: "HHmm")
         let currentDate = Date().setDate(with: "HHmm")
         completionHandler(currentDate, sunriseString, sunsetString)
-    }
-}
-
-extension WeatherViewController {
-    
-    
-    
-    func setSegmentedControllSubview(with nib: UIViewController) {
-        let segmentedItems = ["°C", "°F"]
-        let segmentedControl = UISegmentedControl(items: segmentedItems)
-        segmentedControl.frame = CGRect(x: UIScreen.main.bounds.width-116, y: 0, width: 100, height: 30)
-        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
-        
-        viewModel.getUnitCoreData(compHandler: {
-            if !self.viewModel.selectedUnitArray.isEmpty {
-                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitArray[0]
-                print("self.viewModel.selectedUnitArray[0]",self.viewModel.selectedUnitArray[0])
-            } else {
-                segmentedControl.selectedSegmentIndex = 0
-            }
-        })
-        nib.view.addSubview(segmentedControl)
-    }
- 
-    @objc func segmentAction(_ segmentedControl: UISegmentedControl) {
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            print("c")
-          
-            coreDataOperations.saveNewUnitObject(value: 0, onSuccess: {
-                self.setupSubviews()
-            })
-            
-          
-        case 1:
-            print("f")
-            
-            coreDataOperations.saveNewUnitObject(value: 1, onSuccess: {
-                self.setupSubviews()
-            })
-        default:
-            break
-        }
     }
 }

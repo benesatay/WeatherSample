@@ -32,20 +32,12 @@
                                     <action selector="backBarButton:" destination="-1" id="uBn-dN-NR6"/>
                                 </connections>
                             </barButtonItem>
-                            <rightBarButtonItems>
-                                <barButtonItem image="trash" catalog="system" id="MsW-9d-mlV">
-                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <connections>
-                                        <action selector="removeCityListButton:" destination="-1" id="H3r-DX-B57"/>
-                                    </connections>
-                                </barButtonItem>
-                                <barButtonItem title="°F" id="vQK-T6-Ngl">
-                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </barButtonItem>
-                                <barButtonItem title="°C" id="SDT-1x-N9h">
-                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </barButtonItem>
-                            </rightBarButtonItems>
+                            <barButtonItem key="rightBarButtonItem" image="trash" catalog="system" id="MsW-9d-mlV">
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="removeCityListButton:" destination="-1" id="H3r-DX-B57"/>
+                                </connections>
+                            </barButtonItem>
                         </navigationItem>
                     </items>
                 </navigationBar>

@@ -16,22 +16,14 @@ class SunTimeViewController: UIViewController {
     @IBOutlet weak var sunsetLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         viewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
-                self.getSys()
+                self.setSysData()
             }
         })
-        
-            
-        
-     
-        
     }
     
-    
-    func getSys() {
+    func setSysData() {
         let sys = viewModel.currentWeatherData?.sys
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
@@ -47,6 +39,4 @@ class SunTimeViewController: UIViewController {
             self.sunsetLabel.text = dateFormatter.string(from: sunsetTime)
         }
     }
-    
-    
 }

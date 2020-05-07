@@ -21,6 +21,13 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="2177"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="nSX-wL-43S">
+                    <rect key="frame" x="182" y="1068.5" width="50" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="50" id="SGo-Y7-uzD"/>
+                        <constraint firstAttribute="height" constant="50" id="c0j-Dc-HIg"/>
+                    </constraints>
+                </activityIndicatorView>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Hk-58-kvV">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="2177"/>
                     <subviews>
@@ -75,20 +82,10 @@
                                         <constraint firstAttribute="height" constant="56" id="kVa-6A-Y9K"/>
                                     </constraints>
                                 </stackView>
-                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="nSX-wL-43S">
-                                    <rect key="frame" x="182" y="350" width="50" height="50"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="50" id="81Z-Yv-5Iu"/>
-                                        <constraint firstAttribute="width" constant="50" id="Atz-pN-L6H"/>
-                                    </constraints>
-                                </activityIndicatorView>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstItem="nSX-wL-43S" firstAttribute="top" secondItem="Sbt-an-tmw" secondAttribute="bottom" constant="294" id="Oe7-o8-ZAK"/>
-                                <constraint firstItem="nSX-wL-43S" firstAttribute="leading" secondItem="O2U-oC-RBA" secondAttribute="leading" constant="182" id="Pyg-1N-4nk"/>
                                 <constraint firstAttribute="trailing" secondItem="Sbt-an-tmw" secondAttribute="trailing" id="XEb-k2-MsI"/>
-                                <constraint firstAttribute="trailing" secondItem="nSX-wL-43S" secondAttribute="trailing" constant="182" id="h0S-6k-oGF"/>
                                 <constraint firstAttribute="height" constant="2341" id="inm-3r-wVg"/>
                                 <constraint firstItem="Sbt-an-tmw" firstAttribute="top" secondItem="O2U-oC-RBA" secondAttribute="top" id="ioO-bw-5qu"/>
                                 <constraint firstItem="Sbt-an-tmw" firstAttribute="leading" secondItem="O2U-oC-RBA" secondAttribute="leading" id="kA7-qf-M8I"/>
@@ -111,6 +108,8 @@
             <constraints>
                 <constraint firstItem="6Hk-58-kvV" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="1Kq-lJ-CqH"/>
                 <constraint firstAttribute="bottom" secondItem="6Hk-58-kvV" secondAttribute="bottom" id="EGB-Uu-Zas"/>
+                <constraint firstItem="nSX-wL-43S" firstAttribute="centerY" secondItem="fnl-2z-Ty3" secondAttribute="centerY" id="bL0-mm-8Tc"/>
+                <constraint firstItem="nSX-wL-43S" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="cyo-ub-GyZ"/>
                 <constraint firstItem="6Hk-58-kvV" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="hcd-4n-QcC"/>
                 <constraint firstItem="6Hk-58-kvV" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="ozw-pX-Sub"/>
             </constraints>
