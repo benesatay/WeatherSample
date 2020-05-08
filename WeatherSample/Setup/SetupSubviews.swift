@@ -8,7 +8,10 @@
 
 import UIKit
 
-class SetupSubviews {
+class SetupExternalSubviews {
+    
+    var startPoint: CGFloat = 0.0
+    
     func setSubview(with nib: UIViewController, with view: UIView, viewFrame: CGRect) {
         nib.view.frame = viewFrame
         view.addSubview(nib.view)
@@ -28,21 +31,22 @@ class SetupSubviews {
         vc.setSegmentedControllSubview(with: destination)
         let viewFrame = CGRect(x: 0, y: 10, width: view.bounds.width, height: 500)
         setSubview(with: destination, with: view, viewFrame: viewFrame)
+        self.startPoint = (destination.view.frame.size.height) + (destination.view.frame.origin.y)
     }
     
     //MARK: CurrentWeatherDetailViewController
     func setCurrentWeatherDetailSubview(with vc: WeatherViewController, with view: UIView) {
         let destination = CurrentWeatherDetailsViewController(nibName: "CurrentWeatherDetailsViewController", bundle: nil)
-        
         vc.setBackgroundColor(with: destination,
                               dayStartColor: .systemTeal,
                               dayEndColor: .systemPurple,
                               nightStartColor: .black,
                               nightEndColor: UIColor(red: 88/255, green: 86/255, blue: 214/255, alpha: 1.0),
                               height: 185)
-        
-        let viewFrame = CGRect(x: 0, y: 510, width: view.bounds.width, height: 185)
+        let viewFrame = CGRect(x: 0, y: startPoint, width: view.bounds.width, height: 185)
+
         setSubview(with: destination, with: view, viewFrame: viewFrame)
+        self.startPoint = (destination.view.frame.size.height) + (destination.view.frame.origin.y)
     }
     
     //MARK: ForecastTempViewController
@@ -54,8 +58,9 @@ class SetupSubviews {
                               nightStartColor: UIColor(red: 88/255, green: 86/255, blue: 214/255, alpha: 1.0), //systemIndigo
             nightEndColor: .systemPurple,
             height: 161)
-        let viewFrame = CGRect(x: 0, y: 695, width: view.bounds.width, height: 161)
+        let viewFrame = CGRect(x: 0, y: startPoint, width: view.bounds.width, height: 161)
         setSubview(with: destination, with: view ,viewFrame: viewFrame)
+        self.startPoint = (destination.view.frame.size.height) + (destination.view.frame.origin.y)
         vc.addChild(destination)
     }
     
@@ -68,8 +73,9 @@ class SetupSubviews {
                               nightStartColor: .systemPurple,
                               nightEndColor: .systemTeal,
                               height: 256)
-        let viewFrame = CGRect(x: 0, y: 856, width: view.bounds.width, height: 256)
+        let viewFrame = CGRect(x: 0, y: startPoint, width: view.bounds.width, height: 256)
         setSubview(with: destination, with: view, viewFrame: viewFrame)
+        self.startPoint = (destination.view.frame.size.height) + (destination.view.frame.origin.y)
         vc.addChild(destination)
     }
     
@@ -82,8 +88,9 @@ class SetupSubviews {
                               nightStartColor: .systemTeal,
                               nightEndColor: .white,
                               height: 310)
-        let viewFrame = CGRect(x: 0, y: 1112, width: view.bounds.width, height: 140)
+        let viewFrame = CGRect(x: 0, y: startPoint, width: view.bounds.width, height: 140)
         setSubview(with: destination, with: view, viewFrame: viewFrame)
+        self.startPoint = (destination.view.frame.size.height) + (destination.view.frame.origin.y)
         vc.addChild(destination)
     }
 }

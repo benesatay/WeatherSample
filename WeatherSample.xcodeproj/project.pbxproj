@@ -26,7 +26,7 @@
 		4A871109246102AA00EC4C43 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A871108246102AA00EC4C43 /* String+Extensions.swift */; };
 		4AA8BDA0245FE4F800EA2E45 /* SunTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA8BD9E245FE4F800EA2E45 /* SunTimeViewController.swift */; };
 		4AA8BDA1245FE4F800EA2E45 /* SunTimeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AA8BD9F245FE4F800EA2E45 /* SunTimeViewController.xib */; };
-		4AB02B5124641D8D0097DC4E /* SetupSubviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB02B5024641D8D0097DC4E /* SetupSubviews.swift */; };
+		4AB02B5124641D8D0097DC4E /* SetupExternalSubviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB02B5024641D8D0097DC4E /* SetupExternalSubviews.swift */; };
 		4AB02B552464287B0097DC4E /* SetupAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB02B542464287B0097DC4E /* SetupAlert.swift */; };
 		4AB13FCC2453F3A900F95FF0 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB13FCB2453F3A900F95FF0 /* UIView+Extensions.swift */; };
 		4ACF3BEC2461571F00264D75 /* CoreDataOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACF3BEB2461571F00264D75 /* CoreDataOperations.swift */; };
@@ -66,7 +66,7 @@
 		4A871108246102AA00EC4C43 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		4AA8BD9E245FE4F800EA2E45 /* SunTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunTimeViewController.swift; sourceTree = "<group>"; };
 		4AA8BD9F245FE4F800EA2E45 /* SunTimeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SunTimeViewController.xib; sourceTree = "<group>"; };
-		4AB02B5024641D8D0097DC4E /* SetupSubviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupSubviews.swift; sourceTree = "<group>"; };
+		4AB02B5024641D8D0097DC4E /* SetupExternalSubviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupExternalSubviews.swift; sourceTree = "<group>"; };
 		4AB02B542464287B0097DC4E /* SetupAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupAlert.swift; sourceTree = "<group>"; };
 		4AB13FCB2453F3A900F95FF0 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		4ACF3BEB2461571F00264D75 /* CoreDataOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataOperations.swift; sourceTree = "<group>"; };
@@ -147,7 +147,7 @@
 		4AB02B56246431830097DC4E /* Setup */ = {
 			isa = PBXGroup;
 			children = (
-				4AB02B5024641D8D0097DC4E /* SetupSubviews.swift */,
+				4AB02B5024641D8D0097DC4E /* SetupExternalSubviews.swift */,
 				4AB02B542464287B0097DC4E /* SetupAlert.swift */,
 				4ACF3BEB2461571F00264D75 /* CoreDataOperations.swift */,
 			);
@@ -380,7 +380,7 @@
 				4ADDA20424602A06005F15B3 /* ForecastWindViewController.swift in Sources */,
 				4A6BD1E22455039600614875 /* WeatherViewModel.swift in Sources */,
 				4A6BD1DE245500A100614875 /* ApiManager.swift in Sources */,
-				4AB02B5124641D8D0097DC4E /* SetupSubviews.swift in Sources */,
+				4AB02B5124641D8D0097DC4E /* SetupExternalSubviews.swift in Sources */,
 				4AE091CB2453CD9F004C4190 /* CurrentWeatherViewController.swift in Sources */,
 				4A6BD1DC2454FDE400614875 /* WeatherModel.swift in Sources */,
 				4A762B702462AFD9006D168C /* Double+Extensions.swift in Sources */,

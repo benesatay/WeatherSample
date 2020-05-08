@@ -14,14 +14,15 @@ class WeatherViewController: UIViewController {
     let setAlert = SetupAlert()
     let viewModel = WeatherViewModel()
     let coreDataOperations = CoreDataOperations()
-    let setupSubview = SetupSubviews()
+    let setupSubview = SetupExternalSubviews()
     
-    lazy var searchBar = UISearchBar()
+    var searchBar = UISearchBar()
+    let tableview = UITableView()
+
     var searching: Bool = false
     var cityNameArray: [String] = []
     var filteredCity: [String] = []
     
-    let tableview = UITableView()
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var currentWeatherView: UIView!
@@ -36,13 +37,13 @@ class WeatherViewController: UIViewController {
         searchBar.delegate = self
         tableview.delegate = self
         tableview.dataSource = self
-        tableview.isHidden = true
+        
         DispatchQueue.main.async {
+            self.setSubviews()
             self.setupTableViewSubview()
             self.setupSearchbarSubview()
+            self.setNavigationController()
         }
-        setSubviews()
-        setNavigationController()
         
         viewModel.getTRcityList(onSuccess: {
             for city in (self.viewModel.cityData?.trcitylist!)! {
@@ -58,7 +59,6 @@ class WeatherViewController: UIViewController {
         self.navigationController?.pushViewController(destination, animated: true)
     }
     
-    
     @objc func setSearchBar() {
         UICollectionView.animate(withDuration: 0.2) {
             self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
@@ -73,9 +73,17 @@ class WeatherViewController: UIViewController {
     func setNavigationController() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(passToCityList))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(setSearchBar))
-                self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-                //self.navigationController?.navigationBar.shadowImage = UIImage()
-              
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
+    func setMainBackground() {
+        setBackgroundColor(with: self,
+                           dayStartColor: .cyan,
+                           dayEndColor: .cyan,
+                           nightStartColor: .black,
+                           nightEndColor: .black,
+                           height: Int(UIScreen.main.bounds.height))
     }
     
     @objc func setSubviews() {
@@ -90,15 +98,6 @@ class WeatherViewController: UIViewController {
                 self.activityIndicator.isHidden = true
             }
         })
-    }
-    
-    func setMainBackground() {
-        setBackgroundColor(with: self,
-                           dayStartColor: .cyan,
-                           dayEndColor: .cyan,
-                           nightStartColor: .black,
-                           nightEndColor: .black,
-                           height: Int(UIScreen.main.bounds.height))
     }
     
     @objc func segmentAction(_ segmentedControl: UISegmentedControl) {
@@ -117,6 +116,60 @@ class WeatherViewController: UIViewController {
     }
 }
 
+extension WeatherViewController {
+    //MARK: SegmentedControl
+    func setSegmentedControllSubview(with nib: UIViewController) {
+        let segmentedItems = ["°C", "°F"]
+        
+        let segmentedControl = UISegmentedControl(items: segmentedItems)
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.systemBlue], for: .normal)
+        if #available(iOS 13.0, *) {
+            segmentedControl.selectedSegmentTintColor = .white
+        } else {
+            segmentedControl.tintColor = .white
+        }
+        
+        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
+        viewModel.getUnitCoreData(compHandler: {
+            if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitSegmentIndexArray[0]
+            } else {
+                segmentedControl.selectedSegmentIndex = 0
+            }
+        })
+        let viewFrame = CGRect(x: UIScreen.main.bounds.width-116, y: 0, width: 100, height: 30)
+        segmentedControl.frame = viewFrame
+        nib.view.addSubview(segmentedControl)
+    }
+    
+    //MARK: Searchbar
+    func setupSearchbarSubview() {
+        let viewFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+        searchBar.frame = viewFrame
+        view.addSubview(searchBar)
+        searchBar.didMoveToSuperview()
+        searchBar.isHidden = true
+        UICollectionView.animate(withDuration: 0.2) {
+            self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
+        }
+    }
+    
+    //MARK: Tableview
+    func setupTableViewSubview() {
+        let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
+        tableview.frame = viewFrame
+        tableview.backgroundColor = .white
+        tableview.layer.cornerRadius = 10
+        view.addSubview(tableview)
+        tableview.didMoveToSuperview()
+        tableview.isHidden = true
+
+        UICollectionView.animate(withDuration: 0.3) {
+            self.tableview.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight + 44)
+        }
+    }
+}
+
 extension WeatherViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searching = true
@@ -126,7 +179,6 @@ extension WeatherViewController: UISearchBarDelegate {
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searching = false
         tableview.isHidden = true
-        
         searchBar.showsCancelButton = true
     }
     
@@ -154,7 +206,6 @@ extension WeatherViewController: UISearchBarDelegate {
         if filteredCity.isEmpty {
             searching = false;
         } else {
-            
             searching = true;
         }
         tableview.reloadData()
@@ -208,63 +259,17 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension WeatherViewController {
-    //MARK: SegmentedControl
-    func setSegmentedControllSubview(with nib: UIViewController) {
-        let segmentedItems = ["°C", "°F"]
-        
-        let segmentedControl = UISegmentedControl(items: segmentedItems)
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.systemBlue], for: .normal)
-        if #available(iOS 13.0, *) {
-            segmentedControl.selectedSegmentTintColor = .white
-        } else {
-            segmentedControl.tintColor = .white
-        }
-        
-        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
-        viewModel.getUnitCoreData(compHandler: {
-            if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
-                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitSegmentIndexArray[0]
-            } else {
-                segmentedControl.selectedSegmentIndex = 0
-            }
-        })
-        let viewFrame = CGRect(x: UIScreen.main.bounds.width-116, y: 0, width: 100, height: 30)
-        segmentedControl.frame = viewFrame
-        nib.view.addSubview(segmentedControl)
-    }
-    
-    func setupSearchbarSubview() {
-        let viewFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
-        searchBar.frame = viewFrame
-        view.addSubview(searchBar)
-        searchBar.didMoveToSuperview()
-        searchBar.isHidden = true
-        
-    }
-    
-    //MARK: Tableview
-    func setupTableViewSubview() {
-        let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
-        tableview.frame = viewFrame
-        tableview.backgroundColor = .white
-        tableview.layer.cornerRadius = 10
-        view.addSubview(tableview)
-        tableview.didMoveToSuperview()
-        UICollectionView.animate(withDuration: 0.3) {
-            self.tableview.transform = CGAffineTransform(translationX: 0, y: 110)
-        }
-    }
-}
-
-extension WeatherViewController {
     //MARK: Setup Background
     func setBackgroundColor(with destination: UIViewController, dayStartColor: UIColor, dayEndColor: UIColor, nightStartColor: UIColor, nightEndColor: UIColor, height: Int) {
         setTimeForBackground(completionHandler: {(currentDate, sunriseString, sunsetString) in
             if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
                 destination.view.createGradientLayer(startColor: dayStartColor, endColor: dayEndColor, width: Int(UIScreen.main.bounds.width), height: height)
             } else {
-                destination.view.createGradientLayer(startColor: nightStartColor, endColor: nightEndColor, width: Int(UIScreen.main.bounds.width), height: height)
-                UILabel.appearance().textColor = .white
+//                destination.view.createGradientLayer(startColor: nightStartColor, endColor: nightEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+//                UILabel.appearance().textColor = .white
+//                self.navigationController?.navigationBar.barStyle = .black
+                destination.view.createGradientLayer(startColor: dayStartColor, endColor: dayEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+
             }
         })
     }
@@ -274,7 +279,7 @@ extension WeatherViewController {
             if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
                 destination.view.setBackground(with: "newdaymoon")
             } else {
-                destination.view.setBackground(with: "bloodmoon")
+                destination.view.setBackground(with: "newdaymoon")
             }
         })
     }
