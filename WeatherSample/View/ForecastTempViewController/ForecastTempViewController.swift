@@ -11,7 +11,7 @@ import UIKit
 class ForecastTempViewController: UIViewController {
     
     let viewModel = WeatherViewModel()
-
+    
     @IBOutlet weak var forecastTempCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,7 @@ class ForecastTempViewController: UIViewController {
         onSuccess(forecastTemp)
     }
     
-    func fillTempCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
+    func setupTempCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
         self.viewModel.getUnitCoreData(compHandler: {
             DispatchQueue.main.async {
                 if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
@@ -63,26 +63,22 @@ class ForecastTempViewController: UIViewController {
             }
         })
     }
-
+    
     func setupCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
         cell.layer.cornerRadius = 20
         cell.backgroundColor = .clear
-
-        fillTempCell(to: cell, with: indexPath)
-        
-        let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
-
-        guard let dtTime = forecastWeatherList?.dt else { return }
-        cell.forecastWeatherTimeLabel.text = dtTime.getForecastDate(with: "HH:mm")
-        
-        guard let rainVolume = forecastWeatherList?.rain else { return }
-        cell.forecastRainVolumeLabel.text = String(format:"%.2f", rainVolume.the3h ?? 0)
-        
-        viewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { imageView in
+        viewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { weatherIcon in
             DispatchQueue.main.async {
-                cell.forecastWeatherImageView.image = imageView
+                cell.forecastWeatherImageView.image = weatherIcon
             }
         })
+        let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
+        
+        guard let dtTime = forecastWeatherList?.dt else { return }
+        cell.forecastWeatherTimeLabel.text = dtTime.getForecastDate(with: "HH:mm")
+
+        let rainVolume = forecastWeatherList?.rain
+        cell.forecastRainVolumeLabel.text = String(format:"%.2f", rainVolume?.the3h ?? 0)
     }
 }
 
@@ -97,7 +93,8 @@ extension ForecastTempViewController: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = forecastTempCollectionView.dequeueReusableCell(withReuseIdentifier: "ForecastTempCollectionViewCell", for: indexPath) as! ForecastTempCollectionViewCell
-        
+            
+        setupTempCell(to: cell, with: indexPath)
         setupCell(to: cell, with: indexPath)
         return cell
         

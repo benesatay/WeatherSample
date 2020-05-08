@@ -23,6 +23,8 @@ class SelectedCitiesViewController: UIViewController {
         super.viewDidLoad()
         selectedCitiesTableView.delegate = self
         selectedCitiesTableView.dataSource = self
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(removeCityList))
         viewModel.getCityCoreData(compHandler: {
             for city in self.viewModel.selectedCitiesArray {
                 print(city)
@@ -31,15 +33,12 @@ class SelectedCitiesViewController: UIViewController {
         })
     }
     
-    @IBAction func backBarButton(_ sender: Any) {
-        turnToWeather()
-    }
-    
     func turnToWeather() {
         navigationController?.popViewController(animated: true)
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "deleted"), object: nil)
     }
-    @IBAction func removeCityListButton(_ sender: Any) {
+
+    @objc func removeCityList() {
         coreDataOperations.clearCityList(onSuccess: {
             self.selectedCityArray.removeAll()
             self.selectedCitiesTableView.reloadData()

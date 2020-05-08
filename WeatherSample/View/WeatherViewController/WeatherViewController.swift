@@ -15,7 +15,8 @@ class WeatherViewController: UIViewController {
     let viewModel = WeatherViewModel()
     let coreDataOperations = CoreDataOperations()
     let setupSubview = SetupSubviews()
-  
+    
+    lazy var searchBar = UISearchBar()
     var searching: Bool = false
     var cityNameArray: [String] = []
     var filteredCity: [String] = []
@@ -27,47 +28,54 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var currentWeatherDetailView: UIView!
     @IBOutlet weak var forecastWeatherView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var searchBar: UISearchBar!
     override func viewDidLoad() {
         super.viewDidLoad()
         
         activityIndicator.isHidden = false
-        setNavigationController()
         
         searchBar.delegate = self
         tableview.delegate = self
         tableview.dataSource = self
-        
         tableview.isHidden = true
         DispatchQueue.main.async {
-            self.setTableViewSubview()
+            self.setupTableViewSubview()
+            self.setupSearchbarSubview()
         }
         setSubviews()
-
+        setNavigationController()
+        
         viewModel.getTRcityList(onSuccess: {
             for city in (self.viewModel.cityData?.trcitylist!)! {
                 self.cityNameArray.append(city.name!)
                 self.cityNameArray.sort()
             }
         })
-        
         NotificationCenter.default.addObserver(self, selector: #selector(setSubviews), name: NSNotification.Name(rawValue: "deleted"), object: nil)
     }
     
-    @IBAction func selectedCityList(_ sender: Any) {
-          passToCityList()
-      }
+    @objc func passToCityList() {
+        let destination = SelectedCitiesViewController(nibName: "SelectedCitiesViewController", bundle: nil)
+        self.navigationController?.pushViewController(destination, animated: true)
+    }
     
-    func passToCityList() {
-         let destination = SelectedCitiesViewController(nibName: "SelectedCitiesViewController", bundle: nil)
-         self.navigationController?.pushViewController(destination, animated: true)
-     }
+    
+    @objc func setSearchBar() {
+        UICollectionView.animate(withDuration: 0.2) {
+            self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
+            if self.searchBar.isHidden {
+                self.searchBar.isHidden = false
+            } else {
+                self.searchBar.isHidden = true
+            }
+        }
+    }
     
     func setNavigationController() {
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(passToCityList))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(setSearchBar))
+                self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+                //self.navigationController?.navigationBar.shadowImage = UIImage()
+              
     }
     
     @objc func setSubviews() {
@@ -118,6 +126,7 @@ extension WeatherViewController: UISearchBarDelegate {
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searching = false
         tableview.isHidden = true
+        
         searchBar.showsCancelButton = true
     }
     
@@ -132,6 +141,7 @@ extension WeatherViewController: UISearchBarDelegate {
         searchBar.showsCancelButton = false
         searching = false
         tableview.isHidden = true
+        searchBar.isHidden = true
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -167,7 +177,7 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = cityNameArray[indexPath.row]
         }
         cell.separatorInset = .zero
-        cell.backgroundColor = .systemGroupedBackground
+        cell.backgroundColor = .white
         return cell
     }
     
@@ -201,8 +211,14 @@ extension WeatherViewController {
     //MARK: SegmentedControl
     func setSegmentedControllSubview(with nib: UIViewController) {
         let segmentedItems = ["°C", "°F"]
+        
         let segmentedControl = UISegmentedControl(items: segmentedItems)
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.systemBlue], for: .normal)
+        if #available(iOS 13.0, *) {
+            segmentedControl.selectedSegmentTintColor = .white
+        } else {
+            segmentedControl.tintColor = .white
+        }
         
         segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
         viewModel.getUnitCoreData(compHandler: {
@@ -217,16 +233,25 @@ extension WeatherViewController {
         nib.view.addSubview(segmentedControl)
     }
     
+    func setupSearchbarSubview() {
+        let viewFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+        searchBar.frame = viewFrame
+        view.addSubview(searchBar)
+        searchBar.didMoveToSuperview()
+        searchBar.isHidden = true
+        
+    }
+    
     //MARK: Tableview
-    func setTableViewSubview() {
+    func setupTableViewSubview() {
         let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
         tableview.frame = viewFrame
-        tableview.backgroundColor = .systemGroupedBackground
+        tableview.backgroundColor = .white
         tableview.layer.cornerRadius = 10
         view.addSubview(tableview)
         tableview.didMoveToSuperview()
         UICollectionView.animate(withDuration: 0.3) {
-            self.tableview.transform = CGAffineTransform(translationX: 0, y: 100)
+            self.tableview.transform = CGAffineTransform(translationX: 0, y: 110)
         }
     }
 }
@@ -263,3 +288,5 @@ extension WeatherViewController {
         completionHandler(currentDate, sunriseString, sunsetString)
     }
 }
+
+

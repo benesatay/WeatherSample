@@ -21,7 +21,7 @@ extension UIView {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
         let image = UIImage(named: name)
         imageView.image = image
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         self.addSubview(imageView)
         self.sendSubviewToBack(imageView)
     }
