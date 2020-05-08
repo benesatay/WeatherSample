@@ -1,3 +1,3 @@
 # WeatherSample
-![](weatherDay.gif)
-![](weatherNight.gif)
+![](gifs/weatherDay.gif)
+![](gifs/weatherNight.gif)
