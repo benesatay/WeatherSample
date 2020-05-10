@@ -10,8 +10,7 @@ import UIKit
 
 class CurrentWeatherViewController: UIViewController {
     
-    let viewModel = WeatherViewModel()
-    let selectedUnitData = UnitViewModel()
+    var viewModel = WeatherViewModel()
     
     @IBOutlet weak var windImageView: UIImageView!
     @IBOutlet weak var weatherIconImageView: UIImageView!
@@ -38,10 +37,10 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     func setupWeatherMainData() {
-        self.selectedUnitData.getUnitCoreData(compHandler: {
+        self.viewModel.getUnitCoreData(compHandler: {
             DispatchQueue.main.async {
-                if !self.selectedUnitData.selectedUnitSegmentIndexArray.isEmpty {
-                    switch self.selectedUnitData.selectedUnitSegmentIndexArray[0] {
+                if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+                    switch self.viewModel.selectedUnitSegmentIndexArray[0] {
                     case 0:
                         self.getAsCelcius(onSuccess: { (temp, feels_like, temp_max, temp_min) in
                             self.currentTemperatureLabel.text = String(format:"%.0f", temp).appending("°")

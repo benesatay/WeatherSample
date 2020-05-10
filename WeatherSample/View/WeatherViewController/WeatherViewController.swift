@@ -11,17 +11,14 @@ import CoreData
 
 class WeatherViewController: UIViewController {
     
-    let setAlert = AlertManager()
-    let weatherWiewModel = WeatherViewModel()
-    let coreDataOperation = CoreDataManager()
-    
-    let trCityViewModel = TRCityViewModel()
-    let selectedUnitData = UnitViewModel()
+    let setAlert = SetupAlert()
+    let viewModel = WeatherViewModel()
+    let coreDataOperations = CoreDataOperations()
+    let setupSubview = SetupExternalSubviews()
     
     var searchBar = UISearchBar()
     let tableview = UITableView()
-    
-    var startPoint: CGFloat = 0.0
+
     var searching: Bool = false
     var cityNameArray: [String] = []
     var filteredCity: [String] = []
@@ -48,8 +45,8 @@ class WeatherViewController: UIViewController {
             self.setNavigationController()
         }
         
-        trCityViewModel.getTRcityList(onSuccess: {
-            for city in (self.trCityViewModel.cityData?.trcitylist!)! {
+        viewModel.getTRcityList(onSuccess: {
+            for city in (self.viewModel.cityData?.trcitylist!)! {
                 self.cityNameArray.append(city.name!)
                 self.cityNameArray.sort()
             }
@@ -62,13 +59,22 @@ class WeatherViewController: UIViewController {
         self.navigationController?.pushViewController(destination, animated: true)
     }
     
+    @objc func setSearchBar() {
+        UICollectionView.animate(withDuration: 0.2) {
+            self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
+            if self.searchBar.isHidden {
+                self.searchBar.isHidden = false
+            } else {
+                self.searchBar.isHidden = true
+            }
+        }
+    }
+    
     func setNavigationController() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(passToCityList))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(setSearchBar))
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.navigationBar.backgroundColor = .clear
     }
     
     func setMainBackground() {
@@ -81,38 +87,27 @@ class WeatherViewController: UIViewController {
     }
     
     @objc func setSubviews() {
-        weatherWiewModel.getCurrentWeatherData(onSuccess: {
+        viewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.setMainBackground()
-                self.setCurrentWeatherSubview(with: self.contentView)
-                self.setCurrentWeatherDetailSubview(with: self.contentView)
-                self.setForecastTempSubview(with: self.contentView)
-                self.setForecastWindSubview(with: self.contentView)
-                self.setSunTimeSubview(with: self.contentView)
+                self.setupSubview.setCurrentWeatherSubview(with: self, with: self.contentView)
+                self.setupSubview.setCurrentWeatherDetailSubview(with: self, with: self.contentView)
+                self.setupSubview.setForecastTempSubview(with: self, with: self.contentView)
+                self.setupSubview.setForecastWindSubview(with: self, with: self.contentView)
+                self.setupSubview.setSunTimeSubview(with: self, with: self.contentView)
                 self.activityIndicator.isHidden = true
             }
         })
     }
     
-    @objc func setSearchBar() {
-        UICollectionView.animate(withDuration: 0.3) {
-            self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
-            if self.searchBar.isHidden {
-                self.searchBar.isHidden = false
-            } else {
-                self.searchBar.isHidden = true
-            }
-        }
-    }
-    
-    @objc func setSegmentAction(_ segmentedControl: UISegmentedControl) {
+    @objc func segmentAction(_ segmentedControl: UISegmentedControl) {
         switch segmentedControl.selectedSegmentIndex {
         case 0:
-            coreDataOperation.saveNewUnit(value: 0, onSuccess: {
+            coreDataOperations.saveNewUnit(value: 0, onSuccess: {
                 self.setSubviews()
             })
         case 1:
-            coreDataOperation.saveNewUnit(value: 1, onSuccess: {
+            coreDataOperations.saveNewUnit(value: 1, onSuccess: {
                 self.setSubviews()
             })
         default:
@@ -134,10 +129,10 @@ extension WeatherViewController {
             segmentedControl.tintColor = .white
         }
         
-        segmentedControl.addTarget(self, action: #selector(setSegmentAction(_:)), for: .valueChanged)
-        selectedUnitData.getUnitCoreData(compHandler: {
-            if !self.selectedUnitData.selectedUnitSegmentIndexArray.isEmpty {
-                segmentedControl.selectedSegmentIndex = self.selectedUnitData.selectedUnitSegmentIndexArray[0]
+        segmentedControl.addTarget(self, action: #selector(segmentAction(_:)), for: .valueChanged)
+        viewModel.getUnitCoreData(compHandler: {
+            if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+                segmentedControl.selectedSegmentIndex = self.viewModel.selectedUnitSegmentIndexArray[0]
             } else {
                 segmentedControl.selectedSegmentIndex = 0
             }
@@ -154,6 +149,9 @@ extension WeatherViewController {
         view.addSubview(searchBar)
         searchBar.didMoveToSuperview()
         searchBar.isHidden = true
+        UICollectionView.animate(withDuration: 0.2) {
+            self.searchBar.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight)
+        }
     }
     
     //MARK: Tableview
@@ -165,6 +163,7 @@ extension WeatherViewController {
         view.addSubview(tableview)
         tableview.didMoveToSuperview()
         tableview.isHidden = true
+
         UICollectionView.animate(withDuration: 0.3) {
             self.tableview.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight + 44)
         }
@@ -235,24 +234,64 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !filteredCity.isEmpty {
-            coreDataOperation.saveNewCity(value: filteredCity[indexPath.row], onSuccess: {
-                self.setAlert.setupAlert(title: "Success!", message: "City was added")
+            coreDataOperations.saveNewCity(value: filteredCity[indexPath.row], onSuccess: {
+                self.setAlert.setupAlert(with: self, title: "Success!", message: "City was added")
                 self.setSubviews()
             }, entityAlert: {
-                self.setAlert.setupAlert(title: "Warning!", message: "City already was added")
+                self.setAlert.setupAlert(with: self, title: "Warning!", message: "City already was added")
             })
         } else {
-            coreDataOperation.saveNewCity(value: cityNameArray[indexPath.row], onSuccess: {
-                self.setAlert.setupAlert(title: "Success!", message: "City was added")
+            coreDataOperations.saveNewCity(value: cityNameArray[indexPath.row], onSuccess: {
+                self.setAlert.setupAlert(with: self, title: "Success!", message: "City was added")
                 self.setSubviews()
             }, entityAlert: {
-                self.setAlert.setupAlert(title: "Warning!", message: "City already was added")
+                self.setAlert.setupAlert(with: self, title: "Warning!", message: "City already was added")
             })
         }
         self.searchBar.resignFirstResponder()
+        
         self.filteredCity.removeAll()
         self.tableview.reloadData()
+        
         self.searchBar.endEditing(true)
         self.searchBar.text = nil
     }
 }
+
+extension WeatherViewController {
+    //MARK: Setup Background
+    func setBackgroundColor(with destination: UIViewController, dayStartColor: UIColor, dayEndColor: UIColor, nightStartColor: UIColor, nightEndColor: UIColor, height: Int) {
+        setTimeForBackground(completionHandler: {(currentDate, sunriseString, sunsetString) in
+            if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
+                destination.view.createGradientLayer(startColor: dayStartColor, endColor: dayEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+            } else {
+//                destination.view.createGradientLayer(startColor: nightStartColor, endColor: nightEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+//                UILabel.appearance().textColor = .white
+//                self.navigationController?.navigationBar.barStyle = .black
+                destination.view.createGradientLayer(startColor: dayStartColor, endColor: dayEndColor, width: Int(UIScreen.main.bounds.width), height: height)
+
+            }
+        })
+    }
+    
+    func setBackgroundImage(with destination: UIViewController) {
+        setTimeForBackground(completionHandler: { (currentDate, sunriseString, sunsetString) in
+            if let currentTime = Int(currentDate), currentTime >= Int(sunriseString) ?? 0 && currentTime < Int(sunsetString) ?? 0 {
+                destination.view.setBackground(with: "newdaymoon")
+            } else {
+                destination.view.setBackground(with: "newdaymoon")
+            }
+        })
+    }
+    
+    func setTimeForBackground(completionHandler: @escaping (String, String, String) -> Void) {
+        guard let sunrise = viewModel.currentWeatherData?.sys?.sunrise else { return }
+        guard let sunset = viewModel.currentWeatherData?.sys?.sunset else { return }
+        let sunriseString = sunrise.getForecastDate(with: "HHmm")
+        let sunsetString = sunset.getForecastDate(with: "HHmm")
+        let currentDate = Date().setDate(with: "HHmm")
+        completionHandler(currentDate, sunriseString, sunsetString)
+    }
+}
+
+

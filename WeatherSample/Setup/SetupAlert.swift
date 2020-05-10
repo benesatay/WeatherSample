@@ -1,17 +1,17 @@
 //
-//  AlertController.swift
+//  SetupAlert.swift
 //  WeatherSample
 //
-//  Created by Bahadır Enes Atay on 10.05.2020.
+//  Created by Bahadır Enes Atay on 7.05.2020.
 //  Copyright © 2020 Bahadır Enes Atay. All rights reserved.
 //
 
 import UIKit
 
-class AlertManager: UIAlertController {
-    func setupAlert(title: String, message: String) {
+class SetupAlert {
+    func setupAlert(with vc: UIViewController, title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        present(alert, animated: true)
+        vc.present(alert, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now()+1) {
             alert.dismiss(animated: true, completion: nil)
         }

@@ -11,11 +11,11 @@ import CoreData
 
 class SelectedCitiesViewController: UIViewController {
     
-    let coreDataOperations = CoreDataManager()
-    let setAlert = AlertManager()
-    let selectedCityData = SelectedCityViewModel()
-
+    var viewModel = WeatherViewModel()
+    var coreDataOperations = CoreDataOperations()
+    let setAlert = SetupAlert()
     var selectedCityArray: [String] = []
+    
     var choosedCity: String = ""
     
     @IBOutlet weak var selectedCitiesTableView: UITableView!
@@ -25,14 +25,12 @@ class SelectedCitiesViewController: UIViewController {
         selectedCitiesTableView.dataSource = self
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(removeCityList))
-        selectedCityData.getCityCoreData(compHandler: {
-            for city in self.selectedCityData.selectedCitiesArray {
+        viewModel.getCityCoreData(compHandler: {
+            for city in self.viewModel.selectedCitiesArray {
                 print(city)
                 self.selectedCityArray.append(city)
             }
         })
-        
-        
     }
     
     func turnToWeather() {
@@ -44,8 +42,7 @@ class SelectedCitiesViewController: UIViewController {
         coreDataOperations.clearCityList(onSuccess: {
             self.selectedCityArray.removeAll()
             self.selectedCitiesTableView.reloadData()
-            self.setAlert.setupAlert(title: "Success", message: "Deleted")
-            self.turnToWeather()
+            self.setAlert.setupAlert(with: self, title: "Success", message: "Deleted")
         })
     }
 }
@@ -66,7 +63,7 @@ extension SelectedCitiesViewController: UITableViewDelegate, UITableViewDataSour
             coreDataOperations.removeSelectedCity(index: indexPath.row, onSuccess: {
                 self.selectedCityArray.remove(at: indexPath.row)
                 self.selectedCitiesTableView.reloadData()
-                self.setAlert.setupAlert(title: "Success", message: "Deleted")
+                self.setAlert.setupAlert(with: self, title: "Success", message: "Deleted")
             }, onError: {
                 print("delete error")
             })
@@ -80,10 +77,10 @@ extension SelectedCitiesViewController: UITableViewDelegate, UITableViewDataSour
             self.coreDataOperations.saveNewCity(value: self.choosedCity, onSuccess: {
                 self.turnToWeather()
             }, entityAlert: {
-                self.setAlert.setupAlert(title: "Error", message: "City could not selected")
+                self.setAlert.setupAlert(with: self, title: "Error", message: "City could not selected")
             })
         }, onError: {
-            self.setAlert.setupAlert(title: "Error", message: "City could not selected")
+            self.setAlert.setupAlert(with: self, title: "Error", message: "City could not selected")
         })
     }
 }
