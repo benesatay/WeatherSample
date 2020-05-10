@@ -10,7 +10,9 @@ import UIKit
 
 class ForecastTempViewController: UIViewController {
     
-    let viewModel = WeatherViewModel()
+    let weatherViewModel = WeatherViewModel()
+    let forecastViewModel = ForecastViewModel()
+    let selectedUnitViewModel = UnitViewModel()
     
     @IBOutlet weak var forecastTempCollectionView: UICollectionView!
     override func viewDidLoad() {
@@ -18,7 +20,7 @@ class ForecastTempViewController: UIViewController {
         forecastTempCollectionView.dataSource = self
         forecastTempCollectionView.delegate = self
         
-        viewModel.getForecastWeatherData(onSuccess: {
+        forecastViewModel.getForecastWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.forecastTempCollectionView.reloadData()
             }
@@ -39,15 +41,15 @@ class ForecastTempViewController: UIViewController {
     }
     
     func getAsCelcius(with indexPath: IndexPath, onSuccess: @escaping (Double) -> Void) {
-        guard let forecastTemp = viewModel.forecastData?.list?[indexPath.row].main?.temp else { return }
+        guard let forecastTemp = forecastViewModel.forecastData?.list?[indexPath.row].main?.temp else { return }
         onSuccess(forecastTemp)
     }
     
     func setupTempCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
-        self.viewModel.getUnitCoreData(compHandler: {
+        self.selectedUnitViewModel.getUnitCoreData(compHandler: {
             DispatchQueue.main.async {
-                if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
-                    switch self.viewModel.selectedUnitSegmentIndexArray[0] {
+                if !self.selectedUnitViewModel.selectedUnitSegmentIndexArray.isEmpty {
+                    switch self.selectedUnitViewModel.selectedUnitSegmentIndexArray[0] {
                     case 0:
                         self.getAsCelcius(with: indexPath, onSuccess: { (forecast) in
                             cell.forecastWeatherTempLabel.text = String(format:"%.0f", forecast).appending("°")
@@ -67,12 +69,12 @@ class ForecastTempViewController: UIViewController {
     func setupCell(to cell: ForecastTempCollectionViewCell, with indexPath: IndexPath) {
         cell.layer.cornerRadius = 20
         cell.backgroundColor = .clear
-        viewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { weatherIcon in
+        forecastViewModel.downloadForecastWeatherIcon(index: indexPath.row, completionHandler: { weatherIcon in
             DispatchQueue.main.async {
                 cell.forecastWeatherImageView.image = weatherIcon
             }
         })
-        let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
+        let forecastWeatherList = forecastViewModel.forecastData?.list?[indexPath.row]
         
         guard let dtTime = forecastWeatherList?.dt else { return }
         cell.forecastWeatherTimeLabel.text = dtTime.getForecastDate(with: "HH:mm")
@@ -88,7 +90,7 @@ extension ForecastTempViewController: UICollectionViewDataSource, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.forecastData?.list?.count ?? 0
+        return forecastViewModel.forecastData?.list?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

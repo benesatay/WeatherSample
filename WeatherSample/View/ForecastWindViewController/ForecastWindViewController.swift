@@ -11,6 +11,7 @@ import UIKit
 class ForecastWindViewController: UIViewController {
     
     let viewModel = WeatherViewModel()
+    let forecastViewModel = ForecastViewModel()
     
     @IBOutlet weak var forecastWindCollectionView: UICollectionView!
     override func viewDidLoad() {
@@ -18,7 +19,7 @@ class ForecastWindViewController: UIViewController {
         forecastWindCollectionView.dataSource = self
         forecastWindCollectionView.delegate = self
         
-        viewModel.getForecastWeatherData(onSuccess: {
+        forecastViewModel.getForecastWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.forecastWindCollectionView.reloadData()
             }
@@ -31,7 +32,7 @@ class ForecastWindViewController: UIViewController {
     }
 
     func setupWindData(to cell: ForecastWindCollectionViewCell, with indexPath: IndexPath) {
-        let forecastWeatherList = viewModel.forecastData?.list?[indexPath.row]
+        let forecastWeatherList = forecastViewModel.forecastData?.list?[indexPath.row]
         let forecastWind = forecastWeatherList?.wind
         
         let windSpeed = forecastWind?.speed
@@ -60,7 +61,7 @@ extension ForecastWindViewController: UICollectionViewDelegate, UICollectionView
           return CGSize(width: 75, height: 121)
       }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.forecastData?.list?.count ?? 0
+        return forecastViewModel.forecastData?.list?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
