@@ -10,13 +10,13 @@ import UIKit
 
 class SunTimeViewController: UIViewController {
     
-    let viewModel = WeatherViewModel()
+    let weatherViewModel = WeatherViewModel()
     
     @IBOutlet weak var sunriseLabel: UILabel!
     @IBOutlet weak var sunsetLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.getCurrentWeatherData(onSuccess: {
+        weatherViewModel.getCurrentWeatherData(onSuccess: {
             DispatchQueue.main.async {
                 self.setSysData()
             }
@@ -24,7 +24,7 @@ class SunTimeViewController: UIViewController {
     }
     
     func setSysData() {
-        let sys = viewModel.currentWeatherData?.sys
+        let sys = weatherViewModel.currentWeatherData?.sys
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
         

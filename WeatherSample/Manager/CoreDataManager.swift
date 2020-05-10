@@ -9,16 +9,17 @@
 import UIKit
 import CoreData
 
-class CoreDataOperations {
+class CoreDataManager {
     
-    var viewModel = WeatherViewModel()
+    var selectedCityViewModel = SelectedCityViewModel()
+    var selectedUnitViewModel = UnitViewModel()
     
     // MARK: save new object
     func saveNewCity(value: Any?, onSuccess: @escaping () -> Void, entityAlert: @escaping () -> Void) {
         setupCoreData(completionHandler: { (context) in
             guard context != nil else { return }
-            self.viewModel.getCityCoreData(compHandler: {
-                if self.viewModel.selectedCitiesArray.isEmpty {
+            self.selectedCityViewModel.getCityCoreData(compHandler: {
+                if self.selectedCityViewModel.selectedCitiesArray.isEmpty {
                     self.insertNewObject(value: value, onSuccess: {
                         onSuccess()
                     })
@@ -36,8 +37,8 @@ class CoreDataOperations {
     func saveNewUnit(value: Any?, onSuccess: @escaping () -> Void) {
         setupCoreData(completionHandler: { (context) in
             guard context != nil else { return }
-            self.viewModel.getUnitCoreData(compHandler: {
-                if !self.viewModel.selectedUnitSegmentIndexArray.isEmpty {
+            self.selectedUnitViewModel.getUnitCoreData(compHandler: {
+                if !self.selectedUnitViewModel.selectedUnitSegmentIndexArray.isEmpty {
                     self.clearUnitList()
                 }
                 self.insertUnitObject(value: value, onSuccess: {
@@ -61,8 +62,8 @@ class CoreDataOperations {
     // MARK: Whole entities will be removed
     func clearCityList(onSuccess: @escaping () -> Void) {
         setupRemovingWholeEntities(entityName: "Cities", onSuccess: {
-            self.viewModel.getCityCoreData(compHandler: {
-                self.viewModel.selectedCitiesArray.removeAll()
+            self.selectedCityViewModel.getCityCoreData(compHandler: {
+                self.selectedCityViewModel.selectedCitiesArray.removeAll()
                 print("deleted")
             })
             onSuccess()
@@ -71,8 +72,8 @@ class CoreDataOperations {
     
     func clearUnitList() {
         setupRemovingWholeEntities(entityName: "TempUnit", onSuccess: {
-            self.viewModel.getCityCoreData(compHandler: {
-                self.viewModel.selectedUnitSegmentIndexArray.removeAll()
+            self.selectedUnitViewModel.getUnitCoreData(compHandler: {
+                self.selectedUnitViewModel.selectedUnitSegmentIndexArray.removeAll()
                 print("deleted")
             })
         })
@@ -106,8 +107,8 @@ class CoreDataOperations {
     func removeSelectedCity(index: Int, onSuccess: @escaping () -> Void, onError: @escaping ()-> Void) {
         setupCoreData(completionHandler: { (context) in
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Cities")
-            self.viewModel.getCityCoreData(compHandler: {
-                var willRemoveItemOfArray = self.viewModel.selectedCitiesArray
+            self.selectedCityViewModel.getCityCoreData(compHandler: {
+                var willRemoveItemOfArray = self.selectedCityViewModel.selectedCitiesArray
                 let willRemoveItem = willRemoveItemOfArray[index]
                 fetchRequest.predicate = NSPredicate(format: "name contains[c] %@", willRemoveItem)
                 fetchRequest.returnsObjectsAsFaults = false
@@ -133,42 +134,6 @@ class CoreDataOperations {
                     onError()
                 }
             })
-        })
-    }
-    
-}
-
-extension CoreDataOperations {
-    func setupCoreData(completionHandler: @escaping (NSManagedObjectContext) -> Void) {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        completionHandler(context)
-    }
-    
-    func setupObjectInserting(value: Any?, forEntityName: String, forKey: String) {
-        setupCoreData(completionHandler: { (context) in
-            let newEntity = NSEntityDescription.insertNewObject(forEntityName: forEntityName, into: context)
-            newEntity.setValue(value, forKey: forKey)
-            do {
-                try context.save()
-            } catch {
-                print("insert error")
-            }
-        })
-    }
-    
-    func setupRemovingWholeEntities(entityName: String, onSuccess: @escaping () -> Void) {
-        setupCoreData(completionHandler: { (context) in
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            fetchRequest.returnsObjectsAsFaults = false
-            do {
-                try context.execute(deleteRequest)
-                try context.save()
-                onSuccess()
-            } catch {
-                print ("There was an error")
-            }
         })
     }
 }
