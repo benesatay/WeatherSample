@@ -19,7 +19,7 @@ class WeatherViewController: UIViewController {
     let selectedUnitData = UnitViewModel()
     
     var searchBar = UISearchBar()
-    let tableview = UITableView()
+    let tableView = UITableView()
     
     var startPoint: CGFloat = 0.0
     var searching: Bool = false
@@ -38,8 +38,8 @@ class WeatherViewController: UIViewController {
         activityIndicator.isHidden = false
         
         searchBar.delegate = self
-        tableview.delegate = self
-        tableview.dataSource = self
+        tableView.delegate = self
+        tableView.dataSource = self
         
         DispatchQueue.main.async {
             self.setSubviews()
@@ -72,12 +72,14 @@ class WeatherViewController: UIViewController {
     }
     
     func setMainBackground() {
-        setBackgroundColor(with: self,
-                           dayStartColor: .cyan,
-                           dayEndColor: .cyan,
-                           nightStartColor: .black,
-                           nightEndColor: .black,
-                           height: Int(UIScreen.main.bounds.height))
+        setBackgroundColor(
+            with: self,
+            dayStartColor: .cyan,
+            dayEndColor: .cyan,
+            nightStartColor: .black,
+            nightEndColor: .black,
+            height: Int(UIScreen.main.bounds.height)
+        )
     }
     
     @objc func setSubviews() {
@@ -159,14 +161,14 @@ extension WeatherViewController {
     //MARK: Tableview
     func setupTableViewSubview() {
         let viewFrame = CGRect(x: 8, y: 0, width: UIScreen.main.bounds.width-16, height: 176)
-        tableview.frame = viewFrame
-        tableview.backgroundColor = .white
-        tableview.layer.cornerRadius = 10
-        view.addSubview(tableview)
-        tableview.didMoveToSuperview()
-        tableview.isHidden = true
+        tableView.frame = viewFrame
+        tableView.backgroundColor = .white
+        tableView.layer.cornerRadius = 10
+        view.addSubview(tableView)
+        tableView.didMoveToSuperview()
+        tableView.isHidden = true
         UICollectionView.animate(withDuration: 0.3) {
-            self.tableview.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight + 44)
+            self.tableView.transform = CGAffineTransform(translationX: 0, y: self.topBarHeight + 44)
         }
     }
 }
@@ -179,7 +181,7 @@ extension WeatherViewController: UISearchBarDelegate {
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searching = false
-        tableview.isHidden = true
+        tableView.isHidden = true
         searchBar.showsCancelButton = true
     }
     
@@ -193,7 +195,7 @@ extension WeatherViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
         searching = false
-        tableview.isHidden = true
+        tableView.isHidden = true
         searchBar.isHidden = true
     }
     
@@ -203,13 +205,13 @@ extension WeatherViewController: UISearchBarDelegate {
             let range = tmp.range(of: searchText, options: .caseInsensitive)
             return range.location != NSNotFound
         })
-        tableview.isHidden = false
+        tableView.isHidden = false
         if filteredCity.isEmpty {
             searching = false;
         } else {
             searching = true;
         }
-        tableview.reloadData()
+        tableView.reloadData()
     }
 }
 
@@ -251,7 +253,7 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
         }
         self.searchBar.resignFirstResponder()
         self.filteredCity.removeAll()
-        self.tableview.reloadData()
+        self.tableView.reloadData()
         self.searchBar.endEditing(true)
         self.searchBar.text = nil
     }
